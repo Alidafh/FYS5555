@@ -238,6 +238,13 @@ for j in range(nentries_trend):
         tot_pressure_ev = 0.0
         nev_in_block = 0
 
+def write_rawrate():
+    file = open("rawrate_0{}.txt".format(g), "w")
+    for i in range(len(x_rawrate)):
+        file.write("{}  {} \r\n".format(x_rawrate[i], y_rawrate[i]))
+    file.close()
+
+write_rawrate()
 
 #################
 #   Plotting
@@ -307,11 +314,11 @@ def plotTP(min, max):
     legend.AddEntry(g_pressure,"Pressure","l")
     legend.Draw()
     C.Update()
-    C.Print("../figures/POLA0{}_TP.pdf]".format(g))
+    #C.Print("../figures/POLA0{}_TP.pdf]".format(g))
     return C
 
-C1 = plotTP(0,60)
-C1.Draw()
+#C1 = plotTP(0,60)
+#C1.Draw()
 
 """
 C3 = ROOT.TCanvas("c3", "c3", 1200, 600)
