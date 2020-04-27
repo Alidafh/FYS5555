@@ -92,11 +92,16 @@ if nentries_headr != nentries_weath:
 ####################################
 x_rawrate = array('d')
 y_rawrate = array('d')
+x_pres_w = array('d')
 
 x_event = array('d')
 y_pressure = array('d')
 y_temp_in = array('d')
 y_temp_out = array('d')
+
+y_lat = array('d')
+y_long = array('d')
+x_time_coord = array('d')
 
 h_indoor_temp = ROOT.TH1F("h_indoor_temp","",60,0,60)
 h_outdoor_temp = ROOT.TH1F("h_outdoor_temp", "", 60, 0 ,60)
@@ -106,6 +111,10 @@ h_err_temp = ROOT.TH1F("h_err_temp","",60,0,60)
 h_nev_pressure = ROOT.TH1F("h_nev_pressure","",1500,0,1500)
 h_time_pressure = ROOT.TH1F("h_time_pressure","",1500,0,1500)
 h_err_pressure = ROOT.TH1F("h_err_pressure","",1500,0,1500)
+
+h_latitude = ROOT.TH1F("h_latitude", "", 1500, 0 ,90)
+h_longitude = ROOT.TH1F("h_longitude", "", 1500, -180, 180)
+
 ####################################
 """
 c_weath.GetEntry(0)
@@ -163,6 +172,9 @@ for i in range(nentries_headr):
         x_rawrate.append((start_new_block+(tot_duration/2.)))
         # Fill the raw rate in y-value
         y_rawrate.append(tot_numevents/tot_duration)
+        y_long.append(c_headr.longitude)
+        y_lat.append(c_headr.latitude)
+        x_pres_w.append(c_weath.Pressure)
         # reset variables
         tot_duration = 0.0
         tot_numevents = 0.0
@@ -174,10 +186,15 @@ for i in range(nentries_headr):
     h_indoor_temp.Fill(c_weath.IndoorTemperature, c_headr.NumEvents)
     h_time_temp.Fill(c_weath.IndoorTemperature, run_duration)
 
+    # fill arrays for longitude/latitide
+    #y_long.append(c_headr.longitude)
+    #y_lat.append(c_headr.latitude)
+    #x_time_coord.append((start_new_block+(tot_duration/2.)))
     # This histogram is needed to get the proper statistical uncertainty
     # (i.e. same histograms as above, but storing the number of entries, N)
     # Error is given by sqrt(N)
     h_err_temp.Fill(c_weath.IndoorTemperature)
+
 
 # Loop over all the events in this run
 tot_duration_ev = 0
@@ -238,21 +255,34 @@ for j in range(nentries_trend):
         tot_pressure_ev = 0.0
         nev_in_block = 0
 
-def write_rawrate():
-    file = open("rawrate_0{}.txt".format(g), "w")
-    for i in range(len(x_rawrate)):
-        file.write("{}  {} \r\n".format(x_rawrate[i], y_rawrate[i]))
-    file.close()
 
-write_rawrate()
+def write_data(filename, x, y, x_name, y_name):
+    file = open("tmp_dat/0{}_{}.txt".format(g,filename), "w")
+    file.write("{}  {}\r\n".format(x_name, y_name))
+    if len(x)>len(y):
+        n = len(x)
+    else:
+        n=len(y)
+    for i in range(n):
+        file.write("{}  {} \r\n".format(x[i], y[i]))
+    file.close()
+    print("Data saved in tmp_dat/0{}_{}.txt".format(g, filename))
+
+"""
+write_data("temp", y_temp_in, y_temp_out, "y_temp_in", "y_temp_out")
+write_data("event_pressure", x_event, y_pressure, "x_event", "y_pressure")
+write_data("rawrate", x_rawrate, y_rawrate, "x_rawrate", "y_rawrate")
+write_data("coordinates", y_long, y_lat, "y_long", "y_lat")
+"""
+write_data("raw_press", x_pres_w, y_rawrate, "x_pres_w", "y_rawrate")
 
 #################
 #   Plotting
 #################
 
 
-def plotTP(min, max):
-    C = ROOT.TCanvas("c", "c", 1200, 600)
+def plotTP(min, max, name):
+    C = ROOT.TCanvas(name, name, 1200, 600)
     pad1 = ROOT.TPad("pad1","",0,0,1,1)
     pad3 = ROOT.TPad("pad3","",0,0,1,1)
     pad2 = ROOT.TPad("pad2","",0,0,1,1)
@@ -267,7 +297,7 @@ def plotTP(min, max):
     pad1.Draw()
     pad1.cd()
     g_in_temp = ROOT.TGraph(len(x_event), x_event, y_temp_in)
-    g_in_temp.SetTitle("POLA-0{}".format(g))
+    g_in_temp.SetTitle("POLA-0{} [10 min time interval]".format(g))
     g_in_temp.SetLineColor(4)
     g_in_temp.SetLineWidth(2)
     g_in_temp.SetMinimum(min)
@@ -282,7 +312,7 @@ def plotTP(min, max):
     pad2.Draw()
     pad2.cd()
     g_out_temp = ROOT.TGraph(len(x_event), x_event, y_temp_out)
-    g_out_temp.SetTitle("POLA-0{}".format(g))
+    g_out_temp.SetTitle("POLA-0{} [10 min time interval]".format(g))
     g_out_temp.SetLineColor(2)
     g_out_temp.SetLineWidth(2)
     g_out_temp.SetMinimum(min)
@@ -295,7 +325,7 @@ def plotTP(min, max):
     pad3.Draw()
     pad3.cd()
     g_pressure = ROOT.TGraph(len(x_event), x_event, y_pressure)
-    g_pressure.SetTitle("POLA-0{}".format(g))
+    g_pressure.SetTitle("POLA-0{} [10 min time interval]".format(g))
     g_pressure.SetLineColor(1)
     g_pressure.SetLineWidth(2)
     g_pressure.GetXaxis().SetTimeDisplay(1)
@@ -317,8 +347,144 @@ def plotTP(min, max):
     #C.Print("../figures/POLA0{}_TP.pdf]".format(g))
     return C
 
-#C1 = plotTP(0,60)
-#C1.Draw()
+def plotCoord(latitude, longitude, name):
+    C = ROOT.TCanvas(name, name, 1200, 600)
+    C.SetGrid()
+    g_cord = ROOT.TGraph(len(longitude), longitude, latitude)
+    g_cord.SetMarkerStyle(20)
+    g_cord.SetMarkerColor(1)
+    g_cord.SetLineColor(1)
+    g_cord.SetLineWidth(2)
+    g_cord.SetTitle("POLA-0{} Coordinates".format(g))
+    g_cord.GetXaxis().SetTitle("Longitude")
+    g_cord.GetYaxis().SetTitle("Latitude")
+    g_cord.GetYaxis().SetLabelOffset(0.02)
+    g_cord.GetYaxis().SetTitleOffset(1.4)
+    g_cord.Draw("APL")
+    C.Update()
+    C.Print("../figures/POLA0{}_lat_long.pdf]".format(g))
+    return C
+
+def plotRawL(time, rawrate, L, name):
+    C = ROOT.TCanvas(name, name, 1200, 600)
+    pad1 = ROOT.TPad("pad1","",0,0,1,1)
+    pad2 = ROOT.TPad("pad2","",0,0,1,1)
+    pad1.SetGrid()
+    pad2.SetFillStyle(4000); #will be transparent
+    pad2.SetFrameFillStyle(0);
+
+    pad1.Draw()
+    pad1.cd()
+    g_l = ROOT.TGraph(len(time), time, L)
+    g_l.SetTitle("POLA-01 {} and Raw Rate over time [12 h time interval]".format(name))
+    g_l.SetMarkerStyle(20)
+    g_l.SetMarkerColor(4)
+    g_l.SetLineColor(4)
+    g_l.SetLineWidth(2)
+    g_l.GetXaxis().SetTimeDisplay(1)
+    g_l.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
+    g_l.GetXaxis().SetLabelOffset(0.03)
+    g_l.GetYaxis().SetTitle("{}".format(name))
+    g_l.Draw("APL")
+
+    pad2.Draw()
+    pad2.cd()
+    g_raw = ROOT.TGraph(len(time), time, rawrate)
+    g_raw.SetTitle("")
+    g_raw.SetMarkerStyle(20)
+    g_raw.SetMarkerColor(1)
+    g_raw.SetLineColor(1)
+    g_raw.SetLineWidth(2)
+    g_raw.GetXaxis().SetTimeDisplay(1)
+    g_raw.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
+    g_raw.GetXaxis().SetLabelOffset(0.03)
+    g_raw.GetYaxis().SetTitle("Rate [Hz]")
+    g_raw.GetYaxis().SetLabelOffset(0.01)
+    g_raw.GetYaxis().SetTitleOffset(1.0);
+    g_raw.Draw("Y+APL")
+
+    legend = ROOT.TLegend(0.72,0.13,0.82,0.23)
+    legend.SetFillStyle(0)
+    legend.SetBorderSize(0)
+    legend.AddEntry(g_raw,"Rawrate","lp")
+    legend.AddEntry(g_l, "{}".format(name), "lp")
+    legend.Draw()
+    C.Update()
+    C.Print("../figures/POLA0{}_Raw_{}.pdf]".format(g, name))
+    return C
+
+def plotLTime(time, L, name):
+    C = ROOT.TCanvas(name, name, 1200, 600)
+    C.SetGrid()
+    g_l = ROOT.TGraph(len(time), time, L)
+    g_l.SetMarkerStyle(20)
+    g_l.SetMarkerColor(1)
+    #g_l.SetLineColor(1)
+    #g_l.SetLineWidth(2)
+    g_l.SetTitle("{} over time".format(name))
+    g_l.GetYaxis().SetTitle("{}".format(name))
+    g_l.GetXaxis().SetTimeDisplay(1)
+    g_l.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
+    g_l.GetXaxis().SetLabelOffset(0.03)
+    g_l.Draw("AP")
+    C.Update()
+    #C.Print("../figures/POLA0{}_{}_time.pdf".format(g, name))
+    return C
+
+def plotLatLong(time, lat, long, name):
+    C = ROOT.TCanvas(name, name, 1200, 600)
+    pad1 = ROOT.TPad("pad1","",0,0,1,1)
+    pad2 = ROOT.TPad("pad2","",0,0,1,1)
+    pad1.SetGrid()
+    pad2.SetFillStyle(4000); #will be transparent
+    pad2.SetFrameFillStyle(0);
+
+    pad1.Draw()
+    pad1.cd()
+    g_long = ROOT.TGraph(len(time), time, long)
+    g_long.SetTitle("POLA-01 Latitude and Longitude over time [12 h time interval]")
+    g_long.SetMarkerStyle(20)
+    g_long.SetMarkerColor(4)
+    g_long.SetLineColor(4)
+    g_long.SetLineWidth(2)
+    g_long.GetXaxis().SetTimeDisplay(1)
+    g_long.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
+    g_long.GetXaxis().SetLabelOffset(0.03)
+    g_long.GetYaxis().SetTitle("Longitude")
+    g_long.Draw("APL")
+
+    pad2.Draw()
+    pad2.cd()
+    g_lat = ROOT.TGraph(len(time), time, lat)
+    g_lat.SetTitle("")
+    g_lat.SetMarkerStyle(20)
+    g_lat.SetMarkerColor(1)
+    g_lat.SetLineColor(1)
+    g_lat.SetLineWidth(2)
+    g_lat.GetXaxis().SetTimeDisplay(1)
+    g_lat.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
+    g_lat.GetXaxis().SetLabelOffset(0.03)
+    g_lat.GetYaxis().SetTitle("Latitude")
+    g_lat.GetYaxis().SetLabelOffset(0.01)
+    g_lat.GetYaxis().SetTitleOffset(1.0);
+    g_lat.Draw("Y+ALP")
+
+    legend = ROOT.TLegend(0.72,0.13,0.82,0.23)
+    legend.SetFillStyle(0)
+    legend.SetBorderSize(0)
+    legend.AddEntry(g_lat,"Latitude")
+    legend.AddEntry(g_long, "Longitude")
+    legend.Draw()
+
+    C.Update()
+    C.Print("../figures/POLA0{}_lat_long_time.pdf]".format(g))
+    return C
+
+
+#C3 = plotCoord(y_lat, y_long, "coord")
+#C4 = plotRawL(x_rawrate, y_rawrate, y_lat, "Latitude")
+#C5 = plotRawL(x_rawrate, y_rawrate, y_long, "Longitude")
+#C6 = plotLatLong(x_rawrate, y_lat, y_long, "latlong")
 
 """
 C3 = ROOT.TCanvas("c3", "c3", 1200, 600)
