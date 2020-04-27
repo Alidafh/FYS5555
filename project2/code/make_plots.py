@@ -44,7 +44,7 @@ def plotTP(x_event, y_temp_in, y_temp_out, y_pressure, min, max, name, g):
     pad1.Draw()
     pad1.cd()
     g_in_temp = ROOT.TGraph(len(x_event), x_event, y_temp_in)
-    g_in_temp.SetTitle("POLA-0{} [10 min time interval]".format(g))
+    g_in_temp.SetTitle("POLA-0{} Temperature and Pressure [10 min time interval]".format(g))
     g_in_temp.SetLineColor(4)
     g_in_temp.SetLineWidth(2)
     g_in_temp.SetMinimum(min)
@@ -59,7 +59,7 @@ def plotTP(x_event, y_temp_in, y_temp_out, y_pressure, min, max, name, g):
     pad2.Draw()
     pad2.cd()
     g_out_temp = ROOT.TGraph(len(x_event), x_event, y_temp_out)
-    g_out_temp.SetTitle("POLA-0{} [10 min time interval]".format(g))
+    g_out_temp.SetTitle("")
     g_out_temp.SetLineColor(2)
     g_out_temp.SetLineWidth(2)
     g_out_temp.SetMinimum(min)
@@ -72,7 +72,7 @@ def plotTP(x_event, y_temp_in, y_temp_out, y_pressure, min, max, name, g):
     pad3.Draw()
     pad3.cd()
     g_pressure = ROOT.TGraph(len(x_event), x_event, y_pressure)
-    g_pressure.SetTitle("POLA-0{} [10 min time interval]".format(g))
+    g_pressure.SetTitle("")
     g_pressure.SetLineColor(1)
     g_pressure.SetLineWidth(2)
     g_pressure.GetXaxis().SetTimeDisplay(1)
@@ -91,10 +91,10 @@ def plotTP(x_event, y_temp_in, y_temp_out, y_pressure, min, max, name, g):
     legend.AddEntry(g_pressure,"Pressure","l")
     legend.Draw()
     C.Update()
-    #C.Print("../figures/POLA0{}_TP.pdf]".format(g))
+    C.Print("../figures/POLA0{}_TP.pdf]".format(g))
     return C
 
-def plotCoord(latitude, longitude, name):
+def plotCoord(latitude, longitude, name, g):
     C = ROOT.TCanvas(name, name, 1200, 600)
     C.SetGrid()
     g_cord = ROOT.TGraph(len(longitude), longitude, latitude)
@@ -112,7 +112,7 @@ def plotCoord(latitude, longitude, name):
     C.Print("../figures/POLA0{}_lat_long.pdf]".format(g))
     return C
 
-def plotRawL(time, rawrate, L, name):
+def plotRawL(time, rawrate, L, name, g):
     C = ROOT.TCanvas(name, name, 1200, 600)
     pad1 = ROOT.TPad("pad1","",0,0,1,1)
     pad2 = ROOT.TPad("pad2","",0,0,1,1)
@@ -123,7 +123,7 @@ def plotRawL(time, rawrate, L, name):
     pad1.Draw()
     pad1.cd()
     g_l = ROOT.TGraph(len(time), time, L)
-    g_l.SetTitle("POLA-01 {} and Raw Rate over time [12 h time interval]".format(name))
+    g_l.SetTitle("POLA-0{} {} and Rate over time [12 h time interval]".format(g,name))
     g_l.SetMarkerStyle(20)
     g_l.SetMarkerColor(4)
     g_l.SetLineColor(4)
@@ -175,10 +175,10 @@ def plotLTime(time, L, name):
     g_l.GetXaxis().SetLabelOffset(0.03)
     g_l.Draw("AP")
     C.Update()
-    #C.Print("../figures/POLA0{}_{}_time.pdf".format(g, name))
+    C.Print("../figures/POLA0{}_{}_time.pdf".format(g, name))
     return C
 
-def plotLatLong(time, lat, long, name):
+def plotLatLong(time, lat, long, name, g):
     C = ROOT.TCanvas(name, name, 1200, 600)
     pad1 = ROOT.TPad("pad1","",0,0,1,1)
     pad2 = ROOT.TPad("pad2","",0,0,1,1)
@@ -227,7 +227,7 @@ def plotLatLong(time, lat, long, name):
     C.Print("../figures/POLA0{}_lat_long_time.pdf]".format(g))
     return C
 
-def plotRaw3(x1,x2,x3,y1,y2,y3,name):
+def plotRaw3(x1,x2,x3,y1,y2,y3,name, title):
     C = ROOT.TCanvas(name, name, 1200, 600)
     C.SetGrid()
     mg = ROOT.TMultiGraph("mg_{}".format(name),"mg_{}".format(name))
@@ -257,7 +257,7 @@ def plotRaw3(x1,x2,x3,y1,y2,y3,name):
     mg.Add(g_RawRate2)
     mg.Add(g_RawRate3)
     mg.Draw("APL")
-    mg.SetTitle("Raw rate over time for all detectors [12 hour time interval]")
+    mg.SetTitle("{} rate over time for all detectors [12 hour time interval]".format(title))
     mg.GetXaxis().SetTimeDisplay(1)
     mg.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
     mg.GetXaxis().SetLabelOffset(0.03)
@@ -271,7 +271,9 @@ def plotRaw3(x1,x2,x3,y1,y2,y3,name):
     C.Print("../figures/all_{}.pdf]".format(name))
     return C
 
-def raw_pressure_fit(x_pres, y_raw, min, max,p_ref, name, g):
+def raw_pressure_fit(x_pres, y_raw, min, max, p_ref, alpha, name, g):
+    #   Input: x_pres, y_raw, min, max, p_ref, name, g
+    #   Output: C, corrected y_rawrate
     func = ROOT.TF1("func", "exp([0] + [1]*x)", 0, 10)
     C = ROOT.TCanvas(name, name, 1200, 600)
     C.SetGrid()
@@ -288,28 +290,94 @@ def raw_pressure_fit(x_pres, y_raw, min, max,p_ref, name, g):
     g_raw.Draw("AP")
     fit = g_raw.Fit("func", "S")
     ROOT.gStyle.SetOptFit(111)
+    legend = ROOT.TLegend(0.12,0.75,0.4,0.85)
+    legend.SetFillStyle(0)
+    legend.SetBorderSize(0)
+    legend.AddEntry(g_raw,"Raw rate")
+    legend.AddEntry(func,"Exponential fit: f(x)=exp[p0 + p1 x]")
+    legend.Draw()
     C.Update()
-    C.Print("../figures/POLA0{}_raw_pressure_fit.pdf]".format(g))
-    a = fit.Get().Parameter(0)
+    #C.Draw()
+    C.Print("../figures/POLA0{}_rate_pressure_fit.pdf]".format(g))
     b = fit.Get().Parameter(1)
-    return C, a, b
+    cor = array('d')
+    for i in range(len(x_pres)):
+        f = np.exp(alpha + b*(x_pres[i] - p_ref))
+        n = f*y_raw[i]
+        cor.append((f*y_raw[i]))
+    return C, cor, b
 
-def raw_time(x_raw, y_raw, min, max, name, g):
+def raw_temp_fit(x_temp, y_raw, min, max, name, g):
+    #   Input: x_temp, y_raw, min, max, p_ref, name, g
+    #   Output: C, corrected y_rawrate
+    func = ROOT.TF1("func", "exp([0] + [1]*x)", 0, 10)
     C = ROOT.TCanvas(name, name, 1200, 600)
     C.SetGrid()
-    g_cor = ROOT.TGraph(len(x_raw), x_raw, y_raw)
-    g_cor.SetMarkerStyle(20)
-    g_cor.SetMarkerColor(1)
-    g_cor.SetLineColor(1)
-    g_cor.SetLineWidth(2)
-    g_cor.SetTitle("POLA-0{} Corrected Raw Rate".format(g))
-    g_cor.GetYaxis().SetTitle("Rate [Hz]")
-    #g_cor.SetMinimum(min)
-    #g_cor.SetMaximum(max)
-    g_cor.Draw("AP")
+    g_tmp = ROOT.TGraph(len(x_temp), x_temp, y_raw)
+    g_tmp.SetMarkerStyle(20)
+    g_tmp.SetMarkerColor(1)
+    g_tmp.SetLineColor(1)
+    g_tmp.SetLineWidth(2)
+    g_tmp.SetTitle("POLA-0{} Raw rate vs temperature".format(g))
+    g_tmp.GetYaxis().SetTitle("Rate [Hz]")
+    g_tmp.GetXaxis().SetTitle("Temperature [C]")
+    g_tmp.SetMinimum(min)
+    g_tmp.SetMaximum(max)
+    g_tmp.Draw("AP")
+    fit = g_tmp.Fit("func", "S")
+    ROOT.gStyle.SetOptFit(111)
+    #legend = C.BuildLegend()
+    legend = ROOT.TLegend(0.12,0.75,0.4,0.85)
+    legend.SetFillStyle(0)
+    legend.SetBorderSize(0)
+    legend.AddEntry(g_tmp,"Raw rate")
+    legend.AddEntry(func,"Exponential fit: f(x)=exp[p0 + p1 x]")
+    legend.Draw()
     C.Update()
-    #C.Print("../figures/POLA0{}_corrected_raw_time.pdf]".format(g))
-    return C
+    #C.Draw()
+    C.Print("../figures/POLA0{}_rate_temp_fit.pdf]".format(g))
+    a = fit.Get().Parameter(0)
+    b = fit.Get().Parameter(1)
+    return C, b
+
+def plotRaw1(xc, yc, x1, y1, alpha, beta, name, g):
+        C = ROOT.TCanvas(name, name, 1200, 600)
+        C.SetGrid()
+        mg = ROOT.TMultiGraph("mg_{}".format(name),"mg_{}".format(name))
+
+        g_RawRate2 = ROOT.TGraph(len(x1), x1, y1)
+        g_RawRate2.SetMarkerStyle(20)
+        g_RawRate2.SetMarkerColor(4)
+        g_RawRate2.SetLineWidth(2)
+        g_RawRate2.SetLineColor(4)
+        g_RawRate2.SetTitle("Raw rate")
+
+        g_RawRate1 = ROOT.TGraph(len(xc), xc, yc)
+        g_RawRate1.SetMarkerStyle(20)
+        g_RawRate1.SetMarkerColor(1)
+        g_RawRate1.SetLineWidth(2)
+        g_RawRate1.SetLineColor(1)
+        g_RawRate1.SetTitle("Corrected rate")
+
+        mg.Add(g_RawRate2)
+        mg.Add(g_RawRate1)
+        mg.Draw("APL")
+        mg.SetTitle("POLA-0{} Rate, #alpha={:f} and #beta={:f}, [12 hour time interval]".format(g, alpha, beta))
+        mg.GetXaxis().SetTimeDisplay(1)
+        mg.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
+        mg.GetXaxis().SetLabelOffset(0.03)
+        mg.GetYaxis().SetTitle("Rate [Hz]")
+        #mg.GetYaxis().SetLabelOffset(0.01)
+        #mg.GetYaxis().SetTitleOffset(1.1);
+        if g == 1:
+            legend = C.BuildLegend(0.73,0.3,0.9,0.44)
+        else:
+            legend = C.BuildLegend(0.12,0.75,0.4,0.85)
+        legend.SetFillStyle(0)
+        legend.SetBorderSize(0)
+        C.Update()
+        C.Print("../figures/POLA0{}_corrected_rate.pdf]".format(g))
+        return C
 
 #######################################
 #    Read data
@@ -320,40 +388,62 @@ x2_rawrate, y2_rawrate = readfile("02_rawrate.txt")
 x3_rawrate, y3_rawrate = readfile("03_rawrate.txt")
 
 x1_event, y1_press = readfile("01_event_pressure.txt")
-y1_long, y1_lat =  readfile("01_coordinates.txt")
+x2_event, y2_press = readfile("02_event_pressure.txt")
+x3_event, y3_press = readfile("03_event_pressure.txt")
+
 y1_temp_inside, y1_temp_outside = readfile("01_temp.txt")
+y2_temp_inside, y2_temp_outside = readfile("02_temp.txt")
+y3_temp_inside, y3_temp_outside = readfile("03_temp.txt")
+
+y1_long, y1_lat =  readfile("01_coordinates.txt")
+y2_long, y2_lat =  readfile("02_coordinates.txt")
+y3_long, y3_lat =  readfile("03_coordinates.txt")
 
 x1_press, y1_rawrate1 = readfile("01_raw_press.txt")
 x2_press, y2_rawrate1 = readfile("02_raw_press.txt")
 x3_press, y3_rawrate1 = readfile("03_raw_press.txt")
+
+x1_temp, y1_rawrate1 = readfile("01_raw_temp.txt")
+x2_temp, y2_rawrate1 = readfile("02_raw_temp.txt")
+x3_temp, y3_rawrate1 = readfile("03_raw_temp.txt")
+
 #######################################
 #    DO STUFF
 #######################################
 
-#C1 = raw_pressure(x1_press, y1_rawrate, "pr", 1)
-C1, a, b = raw_pressure_fit(x1_press, y1_rawrate1, 30, 35, 1011.85, "pr1", 1)
+#   C = plotTP(x_event, y_temp_in, y_temp_out, y_pressure, min, max, name, g)
+C11 = plotTP(x1_event, y1_temp_inside, y1_temp_outside, y1_press, 15, 35, "temp_pres1", 1)
+C12 = plotTP(x2_event, y2_temp_inside, y2_temp_outside, y2_press, 23.5, 26, "temp_pres2", 2)
+C13 = plotTP(x3_event, y3_temp_inside, y3_temp_outside, y3_press, 29, 38, "temp_pres3", 3)
 
-print(a)
-print(b)
-p_ref = 1011.85
-gamma = array('d')
-cor = array('d')
-for i in range(len(x1_press)):
-    f = np.exp(a-b*p_ref)*np.exp(b*x1_press[i])
-    print(f)
-    #cor.append((y_raw[i]*gamma[i])*y_raw[i])
+# C = plotRaw3(x1,x2,x3,y1,y2,y3,name)
+CA = plotRaw3(x1_rawrate,x2_rawrate,x3_rawrate,y1_rawrate,y2_rawrate,y3_rawrate, "raw3", "Raw")
 
-#C2, y2_raw_cor = raw_pressure_fit(x2_press, y2_rawrate1, 30, 35, 1008.53, "pr2", 2)
-#C3, y3_raw_cor = raw_pressure_fit(x3_press, y3_rawrate1, 27, 28.5, 985.87, "pr3", 3)
-
-#C4 = plotRaw3(x1_rawrate, x2_rawrate, x3_rawrate, y1_raw_cor, y2_raw_cor, y3_raw_cor, "corrected_raw")
+#   C = plotCoord(latitude, longitude, name, g)
+C21 = plotCoord(y1_lat, y1_long, "cord1", 1)
 
 
-"""
-C1 = plotTP(x1_event,y1_temp_inside, y1_temp_outside, y1_press, 15, 35, "temperature", 1)
+#   C = plotLatLong(time, lat, long, name, g)
+C31 = plotLatLong(x1_rawrate, y1_lat, y1_long, "cord_time", 1)
 
+#   C = plotRawL(time, rawrate, L, name)
+C41 = plotRawL(x1_rawrate, y1_rawrate, y1_lat, "Latitude", 1)
+C42 = plotRawL(x1_rawrate, y1_rawrate, y1_long, "Longitude", 1)
 
+#   C1 = raw_temp_fit(x_temp, y_raw, min, max, p_ref, name, g)
+C71, a1 = raw_temp_fit(x1_temp, y1_rawrate1, 5, 45, "tmp_fit", 1)
+C72, a2 = raw_temp_fit(x2_temp, y2_rawrate1, 28, 38, "tmp_fit2", 2)
+C73, a3 = raw_temp_fit(x3_temp, y3_rawrate1, 26, 29, "tmp_fit3", 3)
 
+#   C = raw_pressure_fit(x_pres, y_raw, min, max, p_ref, alpha, name, g)
+C51, y1_raw_cor,b1  = raw_pressure_fit(x1_press, y1_rawrate1, 5, 50, 1011.85, a1, "pr1", 1)
+C52, y2_raw_cor,b2 = raw_pressure_fit(x2_press, y2_rawrate1, 30, 40, 1008.53, a2, "pr2", 2)
+C53, y3_raw_cor,b3 = raw_pressure_fit(x3_press, y3_rawrate1, 27, 28.5, 985.87, a3, "pr3", 3)
 
+#   C = plotRaw1(xc, yc, x1, y1, alpha, beta, name, g)
+C61 = plotRaw1(x1_rawrate, y1_raw_cor, x1_rawrate, y1_rawrate1, a1, b1, "c_raw", 1)
+C62 = plotRaw1(x2_rawrate, y2_raw_cor, x2_rawrate, y2_rawrate1, a2, b2,"c_raw2", 2)
+C63 = plotRaw1(x3_rawrate, y3_raw_cor, x3_rawrate, y3_rawrate1, a3, b3,"c_raw3", 3)
 
-"""
+#C = plotRaw3(x1,x2,x3,y1,y2,y3,name)
+C9 = plotRaw3(x1_rawrate,x2_rawrate,x3_rawrate,y1_raw_cor,y2_raw_cor,y3_raw_cor,"corr3","Corrected")

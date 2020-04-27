@@ -98,6 +98,7 @@ x_event = array('d')
 y_pressure = array('d')
 y_temp_in = array('d')
 y_temp_out = array('d')
+x_temp = array('d')
 
 y_lat = array('d')
 y_long = array('d')
@@ -175,6 +176,7 @@ for i in range(nentries_headr):
         y_long.append(c_headr.longitude)
         y_lat.append(c_headr.latitude)
         x_pres_w.append(c_weath.Pressure)
+        x_temp.append(c_weath.IndoorTemperature)
         # reset variables
         tot_duration = 0.0
         tot_numevents = 0.0
@@ -268,13 +270,13 @@ def write_data(filename, x, y, x_name, y_name):
     file.close()
     print("Data saved in tmp_dat/0{}_{}.txt".format(g, filename))
 
-"""
-write_data("temp", y_temp_in, y_temp_out, "y_temp_in", "y_temp_out")
-write_data("event_pressure", x_event, y_pressure, "x_event", "y_pressure")
-write_data("rawrate", x_rawrate, y_rawrate, "x_rawrate", "y_rawrate")
-write_data("coordinates", y_long, y_lat, "y_long", "y_lat")
-"""
-write_data("raw_press", x_pres_w, y_rawrate, "x_pres_w", "y_rawrate")
+
+#write_data("temp", y_temp_in, y_temp_out, "y_temp_in", "y_temp_out")
+#write_data("event_pressure", x_event, y_pressure, "x_event", "y_pressure")
+#write_data("rawrate", x_rawrate, y_rawrate, "x_rawrate", "y_rawrate")
+#write_data("coordinates", y_long, y_lat, "y_long", "y_lat")
+#write_data("raw_press", x_pres_w, y_rawrate, "x_pres_w", "y_rawrate")
+write_data("raw_temp", x_temp, y_rawrate, "x_temp", "y_rawrate")
 
 #################
 #   Plotting
