@@ -271,270 +271,36 @@ def write_data(filename, x, y, x_name, y_name):
     print("Data saved in tmp_dat/0{}_{}.txt".format(g, filename))
 
 
-#write_data("temp", y_temp_in, y_temp_out, "y_temp_in", "y_temp_out")
-#write_data("event_pressure", x_event, y_pressure, "x_event", "y_pressure")
-#write_data("rawrate", x_rawrate, y_rawrate, "x_rawrate", "y_rawrate")
-#write_data("coordinates", y_long, y_lat, "y_long", "y_lat")
-#write_data("raw_press", x_pres_w, y_rawrate, "x_pres_w", "y_rawrate")
+#remove outliers for pola 01
+def remove(x, y):
+    x1 = array('d')
+    x2 = array('d')
+    del x[3]
+    del y[3]
+    del x[26]
+    del y[26]
+    return x, y
+
+size = len(x_rawrate)
+a = [0 for x in range(size)]
+b = [0 for x in range(size)]
+
+if g == "1":
+    print ("removing errors")
+    x_rawrate, y_rawrate = remove(x_rawrate, y_rawrate)
+    y_temp_in, y_temp_out = remove(y_temp_in, y_temp_out)
+    x_event, y_pressure = remove(x_event, y_pressure)
+    y_long, y_lat = remove(y_long, y_lat)
+    x_pres_w, a = remove(x_pres_w, a)
+    x_temp, b = remove(x_temp, b)
+
+##############
+#write data to file to save time on not running all of it every time
+#a new plot is made
+##############
+write_data("temp", y_temp_in, y_temp_out, "y_temp_in", "y_temp_out")
+write_data("event_pressure", x_event, y_pressure, "x_event", "y_pressure")
+write_data("rawrate", x_rawrate, y_rawrate, "x_rawrate", "y_rawrate")
+write_data("coordinates", y_long, y_lat, "y_long", "y_lat")
+write_data("raw_press", x_pres_w, y_rawrate, "x_pres_w", "y_rawrate")
 write_data("raw_temp", x_temp, y_rawrate, "x_temp", "y_rawrate")
-
-#################
-#   Plotting
-#################
-
-
-def plotTP(min, max, name):
-    C = ROOT.TCanvas(name, name, 1200, 600)
-    pad1 = ROOT.TPad("pad1","",0,0,1,1)
-    pad3 = ROOT.TPad("pad3","",0,0,1,1)
-    pad2 = ROOT.TPad("pad2","",0,0,1,1)
-    pad1.SetGrid()
-    pad2.SetGrid()
-    pad3.SetGrid()
-    pad2.SetFillStyle(4000); #will be transparent
-    pad2.SetFrameFillStyle(0);
-    pad3.SetFillStyle(4000); #will be transparent
-    pad3.SetFrameFillStyle(0);
-
-    pad1.Draw()
-    pad1.cd()
-    g_in_temp = ROOT.TGraph(len(x_event), x_event, y_temp_in)
-    g_in_temp.SetTitle("POLA-0{} [10 min time interval]".format(g))
-    g_in_temp.SetLineColor(4)
-    g_in_temp.SetLineWidth(2)
-    g_in_temp.SetMinimum(min)
-    g_in_temp.SetMaximum(max)
-    g_in_temp.GetXaxis().SetTimeDisplay(1)
-    g_in_temp.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-    g_in_temp.GetXaxis().SetLabelOffset(0.03)
-    g_in_temp.GetYaxis().SetTitle("Temperature [C]")
-    g_in_temp.Draw("AL")
-
-
-    pad2.Draw()
-    pad2.cd()
-    g_out_temp = ROOT.TGraph(len(x_event), x_event, y_temp_out)
-    g_out_temp.SetTitle("POLA-0{} [10 min time interval]".format(g))
-    g_out_temp.SetLineColor(2)
-    g_out_temp.SetLineWidth(2)
-    g_out_temp.SetMinimum(min)
-    g_out_temp.SetMaximum(max)
-    g_out_temp.GetXaxis().SetTimeDisplay(1)
-    g_out_temp.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-    g_out_temp.GetXaxis().SetLabelOffset(0.03)
-    g_out_temp.Draw("AL")
-
-    pad3.Draw()
-    pad3.cd()
-    g_pressure = ROOT.TGraph(len(x_event), x_event, y_pressure)
-    g_pressure.SetTitle("POLA-0{} [10 min time interval]".format(g))
-    g_pressure.SetLineColor(1)
-    g_pressure.SetLineWidth(2)
-    g_pressure.GetXaxis().SetTimeDisplay(1)
-    g_pressure.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-    g_pressure.GetXaxis().SetLabelOffset(0.03)
-    g_pressure.GetYaxis().SetTitle("Pressure [hPa]")
-    g_pressure.GetYaxis().SetLabelOffset(0.01)
-    g_pressure.GetYaxis().SetTitleOffset(1.1);
-    g_pressure.Draw("Y+AL")
-
-    legend = ROOT.TLegend(0.12,0.75,0.4,0.85)
-    legend.SetFillStyle(0)
-    legend.SetBorderSize(0)
-    legend.AddEntry(g_in_temp,"Indoor Teperature","l")
-    legend.AddEntry(g_out_temp,"Outdoor Temperature","l")
-    legend.AddEntry(g_pressure,"Pressure","l")
-    legend.Draw()
-    C.Update()
-    #C.Print("../figures/POLA0{}_TP.pdf]".format(g))
-    return C
-
-def plotCoord(latitude, longitude, name):
-    C = ROOT.TCanvas(name, name, 1200, 600)
-    C.SetGrid()
-    g_cord = ROOT.TGraph(len(longitude), longitude, latitude)
-    g_cord.SetMarkerStyle(20)
-    g_cord.SetMarkerColor(1)
-    g_cord.SetLineColor(1)
-    g_cord.SetLineWidth(2)
-    g_cord.SetTitle("POLA-0{} Coordinates".format(g))
-    g_cord.GetXaxis().SetTitle("Longitude")
-    g_cord.GetYaxis().SetTitle("Latitude")
-    g_cord.GetYaxis().SetLabelOffset(0.02)
-    g_cord.GetYaxis().SetTitleOffset(1.4)
-    g_cord.Draw("APL")
-    C.Update()
-    C.Print("../figures/POLA0{}_lat_long.pdf]".format(g))
-    return C
-
-def plotRawL(time, rawrate, L, name):
-    C = ROOT.TCanvas(name, name, 1200, 600)
-    pad1 = ROOT.TPad("pad1","",0,0,1,1)
-    pad2 = ROOT.TPad("pad2","",0,0,1,1)
-    pad1.SetGrid()
-    pad2.SetFillStyle(4000); #will be transparent
-    pad2.SetFrameFillStyle(0);
-
-    pad1.Draw()
-    pad1.cd()
-    g_l = ROOT.TGraph(len(time), time, L)
-    g_l.SetTitle("POLA-01 {} and Raw Rate over time [12 h time interval]".format(name))
-    g_l.SetMarkerStyle(20)
-    g_l.SetMarkerColor(4)
-    g_l.SetLineColor(4)
-    g_l.SetLineWidth(2)
-    g_l.GetXaxis().SetTimeDisplay(1)
-    g_l.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-    g_l.GetXaxis().SetLabelOffset(0.03)
-    g_l.GetYaxis().SetTitle("{}".format(name))
-    g_l.Draw("APL")
-
-    pad2.Draw()
-    pad2.cd()
-    g_raw = ROOT.TGraph(len(time), time, rawrate)
-    g_raw.SetTitle("")
-    g_raw.SetMarkerStyle(20)
-    g_raw.SetMarkerColor(1)
-    g_raw.SetLineColor(1)
-    g_raw.SetLineWidth(2)
-    g_raw.GetXaxis().SetTimeDisplay(1)
-    g_raw.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-    g_raw.GetXaxis().SetLabelOffset(0.03)
-    g_raw.GetYaxis().SetTitle("Rate [Hz]")
-    g_raw.GetYaxis().SetLabelOffset(0.01)
-    g_raw.GetYaxis().SetTitleOffset(1.0);
-    g_raw.Draw("Y+APL")
-
-    legend = ROOT.TLegend(0.72,0.13,0.82,0.23)
-    legend.SetFillStyle(0)
-    legend.SetBorderSize(0)
-    legend.AddEntry(g_raw,"Rawrate","lp")
-    legend.AddEntry(g_l, "{}".format(name), "lp")
-    legend.Draw()
-    C.Update()
-    C.Print("../figures/POLA0{}_Raw_{}.pdf]".format(g, name))
-    return C
-
-def plotLTime(time, L, name):
-    C = ROOT.TCanvas(name, name, 1200, 600)
-    C.SetGrid()
-    g_l = ROOT.TGraph(len(time), time, L)
-    g_l.SetMarkerStyle(20)
-    g_l.SetMarkerColor(1)
-    #g_l.SetLineColor(1)
-    #g_l.SetLineWidth(2)
-    g_l.SetTitle("{} over time".format(name))
-    g_l.GetYaxis().SetTitle("{}".format(name))
-    g_l.GetXaxis().SetTimeDisplay(1)
-    g_l.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-    g_l.GetXaxis().SetLabelOffset(0.03)
-    g_l.Draw("AP")
-    C.Update()
-    #C.Print("../figures/POLA0{}_{}_time.pdf".format(g, name))
-    return C
-
-def plotLatLong(time, lat, long, name):
-    C = ROOT.TCanvas(name, name, 1200, 600)
-    pad1 = ROOT.TPad("pad1","",0,0,1,1)
-    pad2 = ROOT.TPad("pad2","",0,0,1,1)
-    pad1.SetGrid()
-    pad2.SetFillStyle(4000); #will be transparent
-    pad2.SetFrameFillStyle(0);
-
-    pad1.Draw()
-    pad1.cd()
-    g_long = ROOT.TGraph(len(time), time, long)
-    g_long.SetTitle("POLA-01 Latitude and Longitude over time [12 h time interval]")
-    g_long.SetMarkerStyle(20)
-    g_long.SetMarkerColor(4)
-    g_long.SetLineColor(4)
-    g_long.SetLineWidth(2)
-    g_long.GetXaxis().SetTimeDisplay(1)
-    g_long.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-    g_long.GetXaxis().SetLabelOffset(0.03)
-    g_long.GetYaxis().SetTitle("Longitude")
-    g_long.Draw("APL")
-
-    pad2.Draw()
-    pad2.cd()
-    g_lat = ROOT.TGraph(len(time), time, lat)
-    g_lat.SetTitle("")
-    g_lat.SetMarkerStyle(20)
-    g_lat.SetMarkerColor(1)
-    g_lat.SetLineColor(1)
-    g_lat.SetLineWidth(2)
-    g_lat.GetXaxis().SetTimeDisplay(1)
-    g_lat.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-    g_lat.GetXaxis().SetLabelOffset(0.03)
-    g_lat.GetYaxis().SetTitle("Latitude")
-    g_lat.GetYaxis().SetLabelOffset(0.01)
-    g_lat.GetYaxis().SetTitleOffset(1.0);
-    g_lat.Draw("Y+ALP")
-
-    legend = ROOT.TLegend(0.72,0.13,0.82,0.23)
-    legend.SetFillStyle(0)
-    legend.SetBorderSize(0)
-    legend.AddEntry(g_lat,"Latitude")
-    legend.AddEntry(g_long, "Longitude")
-    legend.Draw()
-
-    C.Update()
-    C.Print("../figures/POLA0{}_lat_long_time.pdf]".format(g))
-    return C
-
-
-#C3 = plotCoord(y_lat, y_long, "coord")
-#C4 = plotRawL(x_rawrate, y_rawrate, y_lat, "Latitude")
-#C5 = plotRawL(x_rawrate, y_rawrate, y_long, "Longitude")
-#C6 = plotLatLong(x_rawrate, y_lat, y_long, "latlong")
-
-"""
-C3 = ROOT.TCanvas("c3", "c3", 1200, 600)
-g_out_temp = ROOT.TGraph(len(x_event), x_event, y_temp_out)
-g_in_temp = ROOT.TGraph(len(x_event), x_event, y_temp_in)
-g_pressure = ROOT.TGraph(len(x_event), x_event, y_pressure)
-g_out_temp.SetMarkerStyle(20)
-g_out_temp.SetTitle("POLA-0{} Outdoor Temperature".format(g))
-g_out_temp.GetXaxis().SetTimeDisplay(1)
-g_out_temp.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-g_out_temp.GetXaxis().SetLabelOffset(0.03)
-g_out_temp.Draw("AP")
-C3.Draw()
-
-C = ROOT.TCanvas("c", "c", 1200, 600)
-g_RawRate = ROOT.TGraph(len(x_rawrate),x_rawrate,y_rawrate)
-# The default marker in ROOT is horrible so let's change
-g_RawRate.SetMarkerStyle(20)
-# Get x-axis in date and time instead of seconds since 2007
-g_RawRate.GetXaxis().SetTimeDisplay(1)
-# Format the axis (default is date and time split in two lines)
-g_RawRate.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-g_RawRate.GetXaxis().SetLabelOffset(0.03)
-# Draw with axis and points
-g_RawRate.Draw("AP")
-C.Draw()
-
-
-C1 = ROOT.TCanvas("c1", "c1", 1200, 600)
-g_pressure = ROOT.TGraph(len(x_event), x_event, y_pressure)
-g_pressure.SetMarkerStyle(20)
-g_pressure.SetTitle("POLA-0{} Pressure".format(g))
-g_pressure.GetXaxis().SetTimeDisplay(1)
-g_pressure.GetXaxis().SetTimeFormat("#splitline{%d/%m/%y}{%H:%M}");
-g_pressure.GetXaxis().SetLabelOffset(0.03)
-g_pressure.Draw("AP")
-C1.Draw()
-
-
-C3 = ROOT.TCanvas("c3", "c3", 1200, 600)
-h_indoor_temp = h_indoor_temp.Clone("h_indoor_temp")
-h_indoor_temp.SetMarkerStyle(20)
-h_indoor_temp.SetTitle("POLA-0{} Indoor Temperature? ".format(g))
-# Set the errors correctly
-for i in range(1,h_indoor_temp.GetNbinsX()+1):
-    h_indoor_temp.SetBinError(i,h_err_temp.GetBinError(i))
-    h_time_temp.SetBinError(i,h_err_temp.GetBinError(i))
-h_indoor_temp.Divide(h_indoor_temp,h_time_temp)
-h_indoor_temp.Draw("e")
-C3.Draw()
-"""
