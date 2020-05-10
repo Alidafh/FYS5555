@@ -11,6 +11,7 @@
 *.cb
 *.cb2
 .*.lb
+*.tex.bak
 
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
@@ -20,6 +21,7 @@
 *-blx.aux
 *-blx.bib
 *.run.xml
+*.bib.bak
 
 ## Build tool auxiliary files:
 *.fdb_latexmk
@@ -27,4 +29,6 @@
 *.synctex(busy)
 *.synctex.gz
 *.synctex.gz(busy)
-*.pdfsync
+*.pdfsyncl
+
+
