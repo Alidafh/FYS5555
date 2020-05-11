@@ -48,17 +48,17 @@ void analysis::Begin(TTree * /*tree*/)
 
    TString option = GetOption();
 
+   //Set counters to zero
    nEvents_tot = 0;
    nEvents1 = 0;
    nEvents2 = 0;
    nEvents3 = 0;
    nEvents4 = 0;
    nEvents5 = 0;
-   //Define histograms
-   hist_mass_bin1 = new TH1F("hist_mYY_bin1","hist_mYY_bin1", 30, 105, 160.);
-   hist_mass_bin1->GetXaxis()->SetTitle(" mass [GeV]");
-   hist_mass_bin1->GetYaxis()->SetTitle("number of events");
 
+   //Define histograms
+   hist_mass_all = new TH1F("hist_mass_all","hist_mass_all", 30, 105, 160.);
+   hist_mass_unconv = new TH1F("hist_mass_unconv","hist_mass_unconv", 30, 105, 160.);
 }
 
 void analysis::SlaveBegin(TTree * /*tree*/)
@@ -68,7 +68,10 @@ void analysis::SlaveBegin(TTree * /*tree*/)
    // The tree argument is deprecated (on PROOF 0 is passed).
 
    TString option = GetOption();
-   printf("Starting analysis with process option: %s \n", option.Data());
+   cout << "------------------------------------------"<< endl;
+   cout << "Processing dataset:  " << option << endl;
+   cout << "------------------------------------------"<< endl;
+   //printf("Starting analysis on dataset: %s \n", option.Data());
 
 }
 
@@ -89,12 +92,23 @@ Bool_t analysis::Process(Long64_t entry)
    // Use fStatus to set the return value of TTree::Process().
    //
    // The return value is currently not used.
+   //
+   // TODO: scalefactors on pileup etc, and separate between converted and
+   // unconverted photons.
 
    fReader.SetLocalEntry(entry);
+   TString option = GetOption();
 
+   //Count and print the total number of events.
    nEvents_tot++;
-   if( nEvents_tot % 1000000 == 0 ){cout << nEvents_tot/1E6 << " million events processed" << endl;}
+   //if( nEvents_tot % 1000000 == 0 ){cout << nEvents_tot/1E6 << " million events processed" << endl;}
 
+   // Set scale factors
+   Float_t scaleFactor = 1.0;
+
+   //if(option=="mc"){
+   //   scaleFactor = (*mcWeight)*(*scaleFactor_PILEUP)*(*scaleFactor_PHOTON)*(*scaleFactor_PhotonTRIGGER);
+   //}
 
    // Boolean whether event passes a diphoton trigger, ie. at least two photons in event
    if (*trigP) {
@@ -135,6 +149,8 @@ Bool_t analysis::Process(Long64_t entry)
        // calculate the invariant mass
        float dEta = photon1.Eta() - photon2.Eta();
        float dPhi = photon1.Phi() - photon2.Phi();
+       dPhi = dPhi < TMath::Pi() ? dPhi : 2*TMath::Pi() - dPhi;
+
        float mass = sqrt(2*photon1.Pt()*photon2.Pt()*(cosh(dEta) - cos(dPhi)));
 
        // Kinematic selection requires ET/m >0.35 for leading and 0.25 for subleading
@@ -144,9 +160,13 @@ Bool_t analysis::Process(Long64_t entry)
        // Cut on known mass window
        if(!(mass > 105. && mass < 160.)){return kTRUE;}
        nEvents5++;
+       //fill histogram: fill_histogram(TH1F *hist, Double_t *mass, Double_t scale)
+       fill_histogram(hist_mass_all, mass, scaleFactor);
+       if (photon_convType[0] == 0 && photon_convType[1] == 0) {
+          /* only the unconverted ones*/
+          fill_histogram(hist_mass_unconv, mass, scaleFactor);
+       }
 
-       //fill histogram and write to file
-       hist_mass_bin1->Fill(mass);
 
     } // End of trigP
    return kTRUE;
@@ -157,7 +177,6 @@ void analysis::SlaveTerminate()
    // The SlaveTerminate() function is called after all entries or objects
    // have been processed. When running with PROOF SlaveTerminate() is called
    // on each slave server.
-   cout << "SlaveTerminate: YOU HAVE NOT WRITTEN THIS PART OF THE CODE YET!!"<<endl;
 }
 
 void analysis::Terminate()
@@ -165,15 +184,18 @@ void analysis::Terminate()
    // The Terminate() function is the last function to be called during
    // a query. It always runs on the client, it can be used to present
    // the results graphically or save the results to file.
-   cout << "number of events prosessed:   " << nEvents_tot << endl;
-   cout << "nEvents1= " << nEvents1 << endl;
-   cout << "nEvents2=  " << nEvents2 << endl;
-   cout << "nEvents3=  " << nEvents3 << endl;
-   cout << "nEvents4=  " << nEvents4 << endl;
-   cout << "nEvents5=  " << nEvents5 << endl;
+   //cout << "nEvents1= " << nEvents1 << endl;
+   //cout << "nEvents2=  " << nEvents2 << endl;
+   //cout << "nEvents3=  " << nEvents3 << endl;
+   //cout << "nEvents4=  " << nEvents4 << endl;
+   //cout << "nEvents5=  " << nEvents5 << endl;
+   cout << "Total number of events prosessed:   " << nEvents_tot << endl;
+   cout << "Number of events after cuts:        " << nEvents5 << endl;
+   cout << "" <<endl;
    TString option = GetOption();
-   make_histogram_file(hist_mass_bin1, "test", option);
-   //c1 = new TCanvas("c1","c1",800,1000);
-   //hist_mass_bin1->Draw("P*");
-   //c1->Draw();
+   output_histogram_file(hist_mass_all, "all", option);
+   output_histogram_file(hist_mass_unconv, "unconv", option);
+//   c1 = new TCanvas("c1","c1",1000,600);
+//   hist_mass_all->Draw("P*");
+//   c1->Draw();
 }
