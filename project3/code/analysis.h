@@ -34,7 +34,8 @@ public :
    float nEvents4;
    float nEvents5;
 
-   TH1F *hist_mass_bin1        = 0;
+   TH1F *hist_mass_all        = 0;
+   TH1F *hist_mass_unconv     = 0;
    TCanvas *c1 = 0;
 
    // Readers to access the data (delete the ones you do not need).
