@@ -38,6 +38,8 @@ public :
    TH1F *hist_mass_unconv     = 0;
    TCanvas *c1 = 0;
 
+   string p_option;
+
    // Readers to access the data (delete the ones you do not need).
    TTreeReaderValue<Int_t> runNumber = {fReader, "runNumber"};
    TTreeReaderValue<Int_t> eventNumber = {fReader, "eventNumber"};

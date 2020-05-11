@@ -1,21 +1,22 @@
 # FYS5555 - Project 3
 
-# To run code:
+How to use:
 
-Open 'run.py' and update the path to the data location in the main part of the program,
+1) Download the Gamma Gamma data from the CERN Open Data portal:
+   http://opendata.cern.ch/record/15006
 
-my_path = 'path/to/data/GamGam/'
+2) Open the python script 'run_analysis.py'
+   - update the path in 'my_path' to the location of your data.
+   - my_path = 'path/to/data/GamGam/'
 
-Execute with the command:
+3) Run the analysis script 'run_analysis.sh'
+   - source run_analysis.sh or ./run_analysis.sh
 
-'python run.py'
+   - You will be asked if you want to run on real data[0], only monte carlo[1],
+      or running for both[2]. Choosing both may take some time.
 
-You can choose between running only for real data-0, only monte carlo-1,
-or running for both-2. New folders called 'output/datafiles' and 'output/plots'
-will be created. If these already exists, the following is prompted:
+   - New folders called 'output/data', 'output/mc' and 'output/figures'
+     will be created. If these already exists, the existing folders will be used.
 
-'directory /output already exists, continue with the same folder [y/n]'
 
-Type 'y' if you want to use the existing folders and 'n' to abort.
-
- 
+4) plotting TBD

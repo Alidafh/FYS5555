@@ -6,10 +6,11 @@
 #include <iostream>
 
 
-void output_histogram_file(TH1F *hist , TString s, TString option){
-   TString indir = "output/datafiles/";
-   TString filename = "outfile."+option+"."+s+".root";
-   TFile file(indir+filename, "RECREATE");
+void output_histogram_file(TH1F *hist , string folder, TString option){
+   //TString indir = "output/datafiles/";
+   TString indir = "output/"+folder+"/";
+   TString filename = "outfile."+option+".root";
+   TFile file(indir+filename, "UPDATE");
    hist->Write();
    file.Close();
    cout << "histogram saved:  " << indir+filename << endl;

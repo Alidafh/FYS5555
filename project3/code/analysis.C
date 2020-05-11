@@ -47,6 +47,9 @@ void analysis::Begin(TTree * /*tree*/)
    // The tree argument is deprecated (on PROOF 0 is passed).
 
    TString option = GetOption();
+   string s = option.Data();
+   string delimiter = "_";
+   p_option = s.substr(0, s.find(delimiter)); // "data" or "mc"
 
    //Set counters to zero
    nEvents_tot = 0;
@@ -106,9 +109,13 @@ Bool_t analysis::Process(Long64_t entry)
    // Set scale factors
    Float_t scaleFactor = 1.0;
 
-   //if(option=="mc"){
-   //   scaleFactor = (*mcWeight)*(*scaleFactor_PILEUP)*(*scaleFactor_PHOTON)*(*scaleFactor_PhotonTRIGGER);
-   //}
+   //string s = option.Data();
+   //string delimiter = "_";
+   //string token = s.substr(0, s.find(delimiter)); // token is "mc"
+
+   if(p_option == "mc"){
+      scaleFactor = (*mcWeight)*(*scaleFactor_PILEUP)*(*scaleFactor_PHOTON)*(*scaleFactor_PhotonTRIGGER);
+   }
 
    // Boolean whether event passes a diphoton trigger, ie. at least two photons in event
    if (*trigP) {
@@ -193,8 +200,8 @@ void analysis::Terminate()
    cout << "Number of events after cuts:        " << nEvents5 << endl;
    cout << "" <<endl;
    TString option = GetOption();
-   output_histogram_file(hist_mass_all, "all", option);
-   output_histogram_file(hist_mass_unconv, "unconv", option);
+   output_histogram_file(hist_mass_all, p_option, option);
+   output_histogram_file(hist_mass_unconv, p_option, option);
 //   c1 = new TCanvas("c1","c1",1000,600);
 //   hist_mass_all->Draw("P*");
 //   c1->Draw();
