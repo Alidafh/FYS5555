@@ -140,7 +140,7 @@ public :
    virtual void    SlaveTerminate();
    virtual void    Terminate();
    //virtual void    WriteToFile(TString fileid, TString data_type);
-
+   virtual void    write_histogram(TH1F *hist1, TH1F *hist2, string folder, TString option);
    ClassDef(analysis,0);
 
 };
