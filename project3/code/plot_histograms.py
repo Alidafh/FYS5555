@@ -1,24 +1,34 @@
 import ROOT as ro
+import numpy as np
 import sys, os
 import re
 from run_analysis import get_filenames
 
-ro.gStyle.SetOptFit(1111)          # ROOT being told to show all fitting parameters in box!
+ro.gStyle.SetOptFit(1)
+ro.gStyle.SetOptStat(0);
+ro.gStyle.SetPadLeftMargin(0.13)
+ro.gStyle.SetLegendBorderSize(0)
+ro.gStyle.SetPalette(1)
+ro.gStyle.SetGridStyle(2)
+ro.gStyle.SetPadLeftMargin(0.13)
+ro.TH1.AddDirectory(ro.kFALSE)
+#ro.gROOT.SetBatch(1)
 
 def get_hist(file, name):
     infile = ro.TFile(file)
     hist = ro.TH1F()
     hist = infile.Get(name).Clone("new_"+name)
-    hist.SetDirectory(0)
+    #hist.SetDirectory(0)
     infile.Close()
     return hist
 
-def make_dict(path, filenames):
+def make_dict(path, filenames, title):
     name_list = [re.match("outfile.(.*?).root", file).group(1) for file in filenames]
     hist_all_tmp = {}
     hist_unc_tmp = {}
     for name, file in zip(name_list,filenames):
         hist_all_tmp[name] = get_hist(path+file, "hist_mass_all")
+        hist_all_tmp[name].SetTitle(title)
         hist_unc_tmp[name] = get_hist(path+file, "hist_mass_unconv")
     h1 = ro.TH1F("a1", "a1", 30,105,160)
     h2 = ro.TH1F("a2", "a2", 30, 105, 160)
@@ -26,7 +36,11 @@ def make_dict(path, filenames):
         h1.Add(hist_all_tmp[k1])
         h2.Add(hist_unc_tmp[k2])
     hist_all_tmp["combined"] = h1.Clone("hist_all_combined")
+    hist_all_tmp["combined"].SetMarkerStyle(20)
+    hist_all_tmp["combined"].SetTitle(title)
     hist_unc_tmp["combined"] = h2.Clone("hist_unc_combined")
+    hist_unc_tmp["combined"].SetMarkerStyle(20)
+    hist_unc_tmp["combined"].SetTitle(title)
     return hist_all_tmp, hist_unc_tmp
 
 hist_names = ["hist_mass_all", "hist_mass_unconv"]
@@ -37,73 +51,77 @@ m_path = path+"mc/"
 data_filenames = get_filenames(d_path)
 mc_filenames = get_filenames(m_path)
 
-dict_data, dict_data_unc = make_dict(d_path, data_filenames)
-dict_mc, dict_mc_unc = make_dict(m_path, mc_filenames)
+dict_data, dict_data_unc = make_dict(d_path, data_filenames, "Data; m_{#gamma#gamma};Events")
+dict_mc, dict_mc_unc = make_dict(m_path, mc_filenames, "Monte Carlo; m_{#gamma#gamma};Events")
+
+hist_data = dict_data.get("combined").Clone("fit data")
+hist_mc = dict_mc.get("combined").Clone("fit mc")
 
 
-hist_data = dict_data.get("combined").Clone("data_all")
-hist_mc = dict_mc.get("combined").Clone("mc_all")
-
-# signal fit
-sig_fit = ro.TF1("sig", "gaus")
-hist_mc.Clone("fit_all_mc").Fit("sig", "Q0", "", 120,130)
-par_sig = [sig_fit.GetParameters()[i] for i in range(3)]
+#######################################################################
+#                        PLOTTING
+#######################################################################
 
 
-#signal+background fit
+c = ro.TCanvas("fitting", "fitting", 1200, 600)
+c.Divide(2,1)
+
+c.cd(1)
+hist_mc.Draw("E")
+hist_mc.Fit("gaus", "qWW", "", 120, 130)    #Signal fit
+gaus_par = [hist_mc.GetFunction("gaus").GetParameter(i) for i in range(3)]
+
+c.cd(2)
+#signal+background model
 sb = ro.TF1("s+b", "([0]+[1]*x+[2]*x^2+[3]*x^3)+[4]*exp(-0.5*((x-[5])/[6])^2)", 105, 160);
-sb.SetLineColor(2)
-sb.SetLineStyle(1)
-hist_data.Clone("fit_all_data_sb").Fit("s+b", "Q0")
-sb.FixParameter(5,125.0);   #always fixed to 125 GeV,  TODO: find out why
-sb.FixParameter(4,par_sig[1]);
-sb.FixParameter(6,par_sig[2]);
-par_sb = [sb.GetParameters()[i] for i in range(6)]
+sb.SetTitle("Signal+Background model"); sb.SetLineColor(2); sb.SetLineStyle(1)
+sb.FixParameter(4, gaus_par[0]);
+sb.FixParameter(5,125.0);
+sb.FixParameter(6, gaus_par[2]);
+hist_data.Draw("E")
+hist_data.Fit(sb, "R")
+sb_par = [hist_data.GetFunction("s+b").GetParameter(i) for i in range(7)]
 
-#background fit
-bkg_fit = ro.TF1("bkg", "pol3")
-bkg_fit.SetLineColor(4)
-bkg_fit.SetLineStyle(9)
-hist_data.Clone("fit_all_data").Fit("bkg", "Q0","",105,160)
-[bkg_fit.FixParameter(i,par_sb[i]) for i in range(3)]
+c.Update(); c.Draw();
+c.Print("output/figures/combined_fitting.pdf]")
+c.Close()
 
-c1 = ro.TCanvas("c1", "c1", 1000, 600)
-c1.cd()
+c1 = ro.TCanvas("All", "All", 1200, 600); c1.cd();
+l1 = ro.TLegend(0.63,0.70,0.97,0.93)
 
-hist_data.GetXaxis().SetTitle("m_{#gamma#gamma} [GeV]")
-hist_data.GetYaxis().SetTitle("Events/GeV")
-#hist_data.SetMarkerStyle(9)
-hist_data1 = hist_data.Clone("new")
-hist_data1.Draw("P*")
-hist_data1.Fit("bkg", "Q","", 105,160)
-hist_data.Draw("P*same")
-hist_data.Fit("s+b","","", 105,160)
+# Background model created using the parameters from the previous fit.
+bkg = ro.TF1("bkg", "([0]+[1]*x+[2]*x^2+[3]*x^3)", 105, 160);
+bkg.SetTitle("Diphoton invariant mass; m_{#gamma#gamma}; Events")
+bkg.SetLineStyle(7); bkg.SetLineColor(4)
+bkg.SetParameter(0,sb_par[0])
+bkg.SetParameter(1,sb_par[1])
+bkg.SetParameter(2,sb_par[2])
+bkg.SetParameter(3,sb_par[3])
+bkg.Draw("L")
+hist_data.Draw("E same")
+l1.AddEntry(bkg, "Background")
+l1.AddEntry(sb, "Signal+background")
+l1.AddEntry(hist_data, "Data")
+l1.Draw()
 
+c1.Update(); c1.Draw()
+c1.Print("output/figures/combined_all_fits.pdf]")
+c1.Close()
 
-c1.Update()
-c1.Draw()
+c2 = ro.TCanvas("ratio", "ratio", 1200, 600); c2.cd()
+sub_bkg = dict_data.get("combined").Clone("event-b")
+sub_bkg.SetTitle("Subtracted background from data; m_{#gamma#gamma}; Events - bkg ")
+sub_bkg.Add(bkg, -1)
+sub_bkg.Draw("E")
 
-"""
-#pad2.Draw()
-#pad2.cd()
-#hist_data.Fit("bkg")
-#pad1 = ro.TPad("pad1","",0,0,1,1)
-#pad2 = ro.TPad("pad2","",0,0,1,1)
-#pad2.SetFillStyle(4000) #will be transparent
-#pad2.SetFrameFillStyle(0)
+sb_func = hist_data.GetFunction("s+b")
+hist_sb = sb_func.CreateHistogram()
+hist_fit = ro.TH1F("sb_fit","sb_fit",1000,105,160)
+hist_sb.Add(bkg,-1)
+hist_sb.Draw("L same")
 
-#pad1.Draw()
-#pad1.cd()
-c1 = ro.TCanvas("c1", "c1", 1000, 400)
-hist_all_data = add(dict_hist)
-hist_all_data.Draw("P*")
-
-hist_unc_data = add(dict_hist_unc)
-hist_unc_data.Draw("P*SAME")
-c1.Draw()
-"""
-
-
+c2.Update(); c2.Draw()
+c2.Print("output/figures/bkg_subtracted.pdf]")
 
 
 
