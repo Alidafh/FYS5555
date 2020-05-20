@@ -12,6 +12,8 @@ ro.gStyle.SetPalette(1)
 ro.gStyle.SetGridStyle(2)
 ro.gStyle.SetPadLeftMargin(0.13)
 ro.TH1.AddDirectory(ro.kFALSE)
+ro.gStyle.SetEndErrorSize(0.);
+ro.gStyle.SetErrorX(0.0);
 #ro.gROOT.SetBatch(1)
 
 def get_hist(file, name):
@@ -57,11 +59,11 @@ dict_mc, dict_mc_unc = make_dict(m_path, mc_filenames, "Monte Carlo; m_{#gamma#g
 hist_data = dict_data.get("combined").Clone("fit data")
 hist_mc = dict_mc.get("combined").Clone("fit mc")
 
-
+#hist_data = dict_data_unc.get("combined").Clone("fit data")
+#hist_mc = dict_mc_unc.get("combined").Clone("fit mc")
 #######################################################################
 #                        PLOTTING
 #######################################################################
-
 
 c = ro.TCanvas("fitting", "fitting", 1200, 600)
 c.Divide(2,1)
@@ -79,49 +81,57 @@ sb.FixParameter(4, gaus_par[0]);
 sb.FixParameter(5,125.0);
 sb.FixParameter(6, gaus_par[2]);
 hist_data.Draw("E")
-hist_data.Fit(sb, "R")
+hist_data.Fit(sb, "R same", "")
 sb_par = [hist_data.GetFunction("s+b").GetParameter(i) for i in range(7)]
 
 c.Update(); c.Draw();
 c.Print("output/figures/combined_fitting.pdf]")
 c.Close()
 
-c1 = ro.TCanvas("All", "All", 1200, 600); c1.cd();
-l1 = ro.TLegend(0.63,0.70,0.97,0.93)
 
+c1 = ro.TCanvas("All", "All", 1000, 1200);
+c1.Divide(1,2)
+
+c1.cd(1);
+l1 = ro.TLegend(0.63,0.70,0.97,0.93)
 # Background model created using the parameters from the previous fit.
 bkg = ro.TF1("bkg", "([0]+[1]*x+[2]*x^2+[3]*x^3)", 105, 160);
 bkg.SetTitle("Diphoton invariant mass; m_{#gamma#gamma}; Events")
-bkg.SetLineStyle(7); bkg.SetLineColor(4)
+bkg.SetLineStyle(7); bkg.SetLineColor(1)
 bkg.SetParameter(0,sb_par[0])
 bkg.SetParameter(1,sb_par[1])
 bkg.SetParameter(2,sb_par[2])
 bkg.SetParameter(3,sb_par[3])
-bkg.Draw("L")
-hist_data.Draw("E same")
+hist_data.Draw("E")
+bkg.Draw("L same")
 l1.AddEntry(bkg, "Background")
 l1.AddEntry(sb, "Signal+background")
 l1.AddEntry(hist_data, "Data")
 l1.Draw()
+c1.Update()
 
-c1.Update(); c1.Draw()
-c1.Print("output/figures/combined_all_fits.pdf]")
-c1.Close()
+c1.cd(2)
+l2 = ro.TLegend(0.6,0.6,0.88,0.88)
 
-c2 = ro.TCanvas("ratio", "ratio", 1200, 600); c2.cd()
-sub_bkg = dict_data.get("combined").Clone("event-b")
-sub_bkg.SetTitle("Subtracted background from data; m_{#gamma#gamma}; Events - bkg ")
-sub_bkg.Add(bkg, -1)
-sub_bkg.Draw("E")
+hist_nBkg = dict_data.get("combined").Clone("event-bkg")
+hist_nBkg.SetTitle("Data - background; m_{#gamma#gamma}; Events - bkg ")
+hist_nBkg.Add(bkg, -1)
+hist_nBkg.Draw("E same")
 
 sb_func = hist_data.GetFunction("s+b")
-hist_sb = sb_func.CreateHistogram()
-hist_fit = ro.TH1F("sb_fit","sb_fit",1000,105,160)
-hist_sb.Add(bkg,-1)
+hist_sb = sb_func.CreateHistogram().Clone("new_sb")
+hist_sb.Add(bkg, -1)
 hist_sb.Draw("L same")
 
-c2.Update(); c2.Draw()
-c2.Print("output/figures/bkg_subtracted.pdf]")
+line = ro.TLine(105,0,160,0);
+line.SetLineStyle(7); line.SetLineColor(1)
+line.Draw("same")
+
+c1.Update()
+c1.Draw()
+c1.Print("output/figures/bkg_subtracted.pdf]")
+#c1.Close()
+
 
 
 
