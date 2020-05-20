@@ -59,7 +59,7 @@ void analysis::Begin(TTree * /*tree*/)
    nEvents5 = 0;
 
    //Define histograms
-   hist_mass_all = new TH1F("hist_mass_all","hist_mass_all", 30, 105, 160.);
+   hist_mass_all = new TH1F("hist_mass_all","hist_mass_all; X; Y", 30, 105, 160.);
    hist_mass_unconv = new TH1F("hist_mass_unconv","hist_mass_unconv", 30, 105, 160.);
 }
 
@@ -94,6 +94,8 @@ Bool_t analysis::Process(Long64_t entry)
    //
    // The return value is currently not used.
    //
+   //TODO: Add histograms for photon identities, pt, energy etc..
+   //       Se at ting ser fornuftig ut.
 
    fReader.SetLocalEntry(entry);
    TString option = GetOption();
@@ -103,9 +105,9 @@ Bool_t analysis::Process(Long64_t entry)
 
    // Set scale factors
    Float_t scaleFactor = 1.0;
-
+   Float_t sf = ((*XSection)*10.6*1000)/(*SumWeights);   //pb fb osv
    if(p_option == "mc"){
-      scaleFactor = (*mcWeight)*(*scaleFactor_PILEUP)*(*scaleFactor_PHOTON)*(*scaleFactor_PhotonTRIGGER);
+      scaleFactor = sf*(*mcWeight)*(*scaleFactor_PILEUP)*(*scaleFactor_PHOTON)*(*scaleFactor_PhotonTRIGGER);
    }
 
    // Boolean whether event passes a diphoton trigger, ie. at least two photons in event
