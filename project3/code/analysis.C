@@ -166,7 +166,7 @@ Bool_t analysis::Process(Long64_t entry)
        // unconverted photons in the central region,
        if (photon_convType[0] == 0 && photon_convType[1] == 0) {
           /* only the unconverted ones*/
-          if(abs(photon1.Eta()) <= 0.95 && abs(photon2.Eta())<=0.95){
+          if(abs(photon1.Eta()) <= 0.75 && abs(photon2.Eta())<=0.75){
              /* in the central region |eta| <= 0.95*/
             hist_mass_unconv->Fill(mass, scaleFactor);
           }
