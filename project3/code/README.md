@@ -20,4 +20,4 @@ How to use:
 
 
 4) plotting TBD
-   - neet to fix statistics for histograms.
+   - do python plot_histograms.py
