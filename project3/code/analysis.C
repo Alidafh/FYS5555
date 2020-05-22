@@ -59,8 +59,14 @@ void analysis::Begin(TTree * /*tree*/)
    nEvents5 = 0;
 
    //Define histograms
-   hist_mass_all = new TH1F("hist_mass_all","hist_mass_all; X; Y", 30, 105, 160.);
+   hist_mass_all = new TH1F("hist_mass_all","hist_mass_all", 30, 105, 160.);
    hist_mass_unconv = new TH1F("hist_mass_unconv","hist_mass_unconv", 30, 105, 160.);
+   hist_pt1 = new TH1F("pt1", "pt1; pt; events", 30, 0, 200);
+   hist_pt2 = new TH1F("pt2", "pt2; pt; events", 30, 0, 200);
+
+   hist_eta1 = new TH1F("eta1", "eta1; eta; events", 30, -3, 3);
+   hist_eta2 = new TH1F("eta2", "eta2; eta; events", 30, -3, 3);
+   c = new TCanvas("c", "c", 1200, 600);
 }
 
 void analysis::SlaveBegin(TTree * /*tree*/)
@@ -153,7 +159,7 @@ Bool_t analysis::Process(Long64_t entry)
 
        float mass = sqrt(2*photon1.Pt()*photon2.Pt()*(cosh(dEta) - cos(dPhi)));
 
-       // Kinematic selection requires ET/m >0.35 for leading and 0.25 for subleading
+       // Kinematic selection requires ET/m > 0.35 for leading and 0.25 for subleading
        if (!(photon1.E()/mass > 0.35 && photon2.E()/mass > 0.25)){return kTRUE;}
        nEvents4++;
 
@@ -161,18 +167,20 @@ Bool_t analysis::Process(Long64_t entry)
        if(!(mass > 105. && mass < 160.)){return kTRUE;}
        nEvents5++;
 
-       //fill histograms
-       hist_mass_all->Fill(mass, scaleFactor);
-       // unconverted photons in the central region,
-       if (photon_convType[0] == 0 && photon_convType[1] == 0) {
-          /* only the unconverted ones*/
-          if(abs(photon1.Eta()) <= 0.75 && abs(photon2.Eta())<=0.75){
-             /* in the central region |eta| <= 0.95*/
-            hist_mass_unconv->Fill(mass, scaleFactor);
+       hist_pt1->Fill(photon1.Pt());
+       hist_pt2->Fill(photon2.Pt());
+
+       hist_eta1->Fill(photon1.Eta());
+       hist_eta2->Fill(photon2.Eta());
+
+       if(abs(photon1.Eta()) <= 0.75 && abs(photon2.Eta())<=0.75){
+          /*Central region - best mass resolution*/
+          hist_mass_all->Fill(mass, scaleFactor);
+          if (photon_convType[0] == 0 && photon_convType[1] == 0) {
+             /* only the unconverted ones*/
+             hist_mass_unconv->Fill(mass, scaleFactor);
           }
        }
-
-
     } // End of trigP
    return kTRUE;
 }
@@ -195,8 +203,19 @@ void analysis::Terminate()
    cout << "" <<endl;
    TString option = GetOption();
    write_histogram(hist_mass_all, hist_mass_unconv, p_option, option);
-   //write_histogram(hist_mass_unconv, p_option, option);
-
+   //c->Divide(2);
+   //c->cd(1);
+   //hist_pt1->Draw("L");
+   //hist_pt1->SetLineColor(2);
+   //hist_pt2->Draw("L same");
+   //hist_pt2->SetLineColor(4);
+   //c->Draw();
+   //gPad->SetLogy(1);
+   //c->BuildLegend();
+   //c->cd(2);
+   //hist_eta1->Draw("L");
+   //hist_eta2->Draw("L same");
+   //c->Draw();
 }
 
 
