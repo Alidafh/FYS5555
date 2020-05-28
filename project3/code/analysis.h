@@ -33,13 +33,24 @@ public :
    float nEvents3;
    float nEvents4;
    float nEvents5;
+   float nEvents6;
+   float nEvents7;
 
    TH1F *hist_pt1             = 0;
    TH1F *hist_pt2             = 0;
    TH1F *hist_eta1            = 0;
    TH1F *hist_eta2            = 0;
-   TH1F *hist_mass_all        = 0;
-   TH1F *hist_mass_unconv     = 0;
+   TH1F *hist_energy1         = 0;
+   TH1F *hist_energy2         = 0;
+   TH1F *hist_dPhi            = 0;
+   TH1F *hist_kincut0         = 0;
+   TH1F *hist_kincut1         = 0;
+
+   TH1F *hist_mass_CP1        = 0;
+   TH1F *hist_mass_CP2        = 0;
+   TH1F *hist_mass_CP3        = 0;
+   TH1F *hist_mass_CP4        = 0;
+
    TCanvas *c;
    string p_option;
 
@@ -142,8 +153,9 @@ public :
    virtual TList  *GetOutputList() const { return fOutput; }
    virtual void    SlaveTerminate();
    virtual void    Terminate();
-   //virtual void    WriteToFile(TString fileid, TString data_type);
-   virtual void    write_histogram(TH1F *hist1, TH1F *hist2, string folder, TString option);
+   virtual void    write_info(string folder, TString option);
+   virtual void    write_histogram(string folder, TString option);
+   virtual void    write_div(TString option);
    ClassDef(analysis,0);
 
 };

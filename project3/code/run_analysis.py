@@ -2,6 +2,16 @@ import ROOT as ro
 import sys, os
 import re
 
+def Quiet(func,level = ro.kInfo + 1):
+    def qfunc(*args,**kwargs):
+        oldlevel = ro.gErrorIgnoreLevel
+        ro.gErrorIgnoreLevel = level
+        try:
+            return func(*args,**kwargs)
+        finally:
+            ro.gErrorIgnoreLevel = oldlevel
+    return qfunc
+
 def run_process(indir, filename, i):
     if i ==0: #Data
         arg = re.match("^.*?(?=.G)", filename)[0]

@@ -57,15 +57,28 @@ void analysis::Begin(TTree * /*tree*/)
    nEvents3 = 0;
    nEvents4 = 0;
    nEvents5 = 0;
+   nEvents6 = 0;
 
    //Define histograms
-   hist_mass_all = new TH1F("hist_mass_all","hist_mass_all", 30, 105, 160.);
-   hist_mass_unconv = new TH1F("hist_mass_unconv","hist_mass_unconv", 30, 105, 160.);
-   hist_pt1 = new TH1F("pt1", "pt1; pt; events", 30, 0, 200);
-   hist_pt2 = new TH1F("pt2", "pt2; pt; events", 30, 0, 200);
+   hist_mass_CP2 = new TH1F("hist_mass_CP2","hist_mass_CP2 ;m_{#gamma#gamma}; Events", 30, 105, 160.);
+   hist_mass_CP3 = new TH1F("hist_mass_CP3","hist_mass_CP3 ;m_{#gamma#gamma}; Events", 30, 105, 160.);
+   hist_mass_CP1 = new TH1F("hist_mass_CP1","hist_mass_CP1 ;m_{#gamma#gamma}; Events", 30, 105, 160.);
+   hist_mass_CP4 = new TH1F("hist_mass_CP4","hist_mass_CP4 ;m_{#gamma#gamma}; Events", 30, 105, 160.);
 
-   hist_eta1 = new TH1F("eta1", "eta1; eta; events", 30, -3, 3);
-   hist_eta2 = new TH1F("eta2", "eta2; eta; events", 30, -3, 3);
+   hist_pt1 = new TH1F("hist_pt1", "pt1; p_{t}^{#gamma#gamma}; Events", 30, 0, 200);
+   hist_pt2 = new TH1F("hist_pt2", "pt2; p_{t}^{#gamma#gamma}; Events", 30, 0, 200);
+
+   hist_eta1 = new TH1F("hist_eta1", "eta1; #eta_{#gamma#gamma}; Events", 30, -3, 3);
+   hist_eta2 = new TH1F("hist_eta2", "eta2; #eta_{#gamma#gamma}; Events", 30, -3, 3);
+
+   hist_energy1 = new TH1F("hist_energy1", "energy; #E_{#gamma#gamma}; Events", 30, 0, 500);
+   hist_energy2 = new TH1F("hist_energy2", "energy; #E_{#gamma#gamma}; Events", 30, 0, 500);
+
+   hist_dPhi = new TH1F("hist_dPhi", "; #Delta #phi_{#gamma#gamma}; Events", 30, -6, 6);
+
+   hist_kincut0 = new TH1F("hist_kincut0", "; E/m_{#gamma#gamma}; Events", 30, 0, 5);
+   hist_kincut1 = new TH1F("hist_kincut1", "; E/m_{#gamma#gamma}; Events", 30, 0, 5);
+
    c = new TCanvas("c", "c", 1200, 600);
 }
 
@@ -155,31 +168,42 @@ Bool_t analysis::Process(Long64_t entry)
        // calculate the invariant mass
        float dEta = photon1.Eta() - photon2.Eta();
        float dPhi = photon1.Phi() - photon2.Phi();
-       dPhi = dPhi < TMath::Pi() ? dPhi : 2*TMath::Pi() - dPhi;
-
+       //dPhi = dPhi < TMath::Pi() ? dPhi : 2*TMath::Pi() - dPhi;
        float mass = sqrt(2*photon1.Pt()*photon2.Pt()*(cosh(dEta) - cos(dPhi)));
-
-       // Kinematic selection requires ET/m > 0.35 for leading and 0.25 for subleading
-       if (!(photon1.E()/mass > 0.35 && photon2.E()/mass > 0.25)){return kTRUE;}
-       nEvents4++;
 
        // Cut on known mass window
        if(!(mass > 105. && mass < 160.)){return kTRUE;}
+       nEvents4++;
+
+       // Kinematic selection requires ET/m > 0.35 for leading and 0.25 for subleading
+       hist_kincut0->Fill(photon1.E()/mass, scaleFactor);
+       if (!(photon1.E()/mass > 0.35 && photon2.E()/mass > 0.25)){return kTRUE;}
        nEvents5++;
+       hist_kincut1->Fill(photon1.E()/mass, scaleFactor);
 
-       hist_pt1->Fill(photon1.Pt());
-       hist_pt2->Fill(photon2.Pt());
+       hist_pt1->Fill(photon1.Pt(), scaleFactor);
+       hist_pt2->Fill(photon2.Pt(), scaleFactor);
 
-       hist_eta1->Fill(photon1.Eta());
-       hist_eta2->Fill(photon2.Eta());
+       hist_eta1->Fill(photon1.Eta(), scaleFactor);
+       hist_eta2->Fill(photon2.Eta(), scaleFactor);
+
+       hist_energy1->Fill(photon1.E(), scaleFactor);
+       hist_energy2->Fill(photon2.E(), scaleFactor);
+
+       hist_dPhi->Fill(dPhi, scaleFactor);
+
+       hist_mass_CP1->Fill(mass, scaleFactor);
 
        if(abs(photon1.Eta()) <= 0.75 && abs(photon2.Eta())<=0.75){
           /*Central region - best mass resolution*/
-          hist_mass_all->Fill(mass, scaleFactor);
+          nEvents6++;
+          hist_mass_CP2->Fill(mass, scaleFactor);
           if (photon_convType[0] == 0 && photon_convType[1] == 0) {
              /* only the unconverted ones*/
-             hist_mass_unconv->Fill(mass, scaleFactor);
+             hist_mass_CP3->Fill(mass, scaleFactor);
+             return kTRUE;
           }
+          hist_mass_CP4->Fill(mass, scaleFactor);
        }
     } // End of trigP
    return kTRUE;
@@ -201,32 +225,68 @@ void analysis::Terminate()
    cout << "Total number of events prosessed:   " << nEvents_tot << endl;
    cout << "Number of events after cuts:        " << nEvents5 << endl;
    cout << "" <<endl;
+
    TString option = GetOption();
-   write_histogram(hist_mass_all, hist_mass_unconv, p_option, option);
-   //c->Divide(2);
-   //c->cd(1);
-   //hist_pt1->Draw("L");
-   //hist_pt1->SetLineColor(2);
-   //hist_pt2->Draw("L same");
-   //hist_pt2->SetLineColor(4);
-   //c->Draw();
-   //gPad->SetLogy(1);
-   //c->BuildLegend();
-   //c->cd(2);
-   //hist_eta1->Draw("L");
-   //hist_eta2->Draw("L same");
-   //c->Draw();
+   write_histogram(p_option, option);
+   write_div(option);
+   write_info(p_option, option);
 }
 
 
-void analysis::write_histogram(TH1F *hist1, TH1F *hist2, string folder, TString option){
+void analysis::write_histogram(string folder, TString option){
    TString indir = "output/"+folder+"/";
    TString filename = "outfile."+option+".root";
    TFile file(indir+filename, "RECREATE");
-   hist1->Write();
-   hist2->Write();
+   hist_mass_CP1->Write();
+   hist_mass_CP3->Write();
+   hist_mass_CP2->Write();
+   hist_mass_CP4->Write();
    file.Close();
    cout << "histograms saved in:  " << indir+filename << endl;
-   hist1->Reset();
-   hist2->Reset();
+   hist_mass_CP1->Reset();
+   hist_mass_CP3->Reset();
+   hist_mass_CP2->Reset();
+   hist_mass_CP4->Reset();
+}
+
+void analysis::write_info(string folder, TString option){
+   ofstream info;
+   TString indir = "output/"+folder+"/";
+   TString filename2 = "info_"+option+".txt";
+   info.open(indir+filename2);
+   info << "total_events"        << "  " << nEvents_tot << "  " <<  "1" << endl;
+   info << "Diphoton_trigger"    << "  " << nEvents1    << "  " << nEvents1/nEvents_tot << endl;
+   info << "Exactly_two_photons" << "  " << nEvents2    << "  " << nEvents2/nEvents_tot << endl;
+   info << "Preselection_cuts"   << "  " << nEvents3    << "  " << nEvents3/nEvents_tot << endl;
+   info << "Mass_window_cut"     << "  " << nEvents4    << "  " << nEvents4/nEvents_tot << endl;
+   info << "Kinematic_selection" << "  " << nEvents5    << "  " << nEvents5/nEvents_tot << endl;
+   info << "Central_region"      << "  " << nEvents6    << "  " << nEvents6/nEvents_tot << endl;
+   info.close();
+   cout << "info saved in:        " << filename2 << endl;
+}
+
+void analysis::write_div(TString option){
+   TString indir = "output/";
+   TString filename = "div."+option+".root";
+   TFile file(indir+filename, "RECREATE");
+   hist_pt1->Write();
+   hist_pt2->Write();
+   hist_eta1->Write();
+   hist_eta2->Write();
+   hist_energy1->Write();
+   hist_energy2->Write();
+   hist_dPhi->Write();
+   hist_kincut0->Write();
+   hist_kincut1->Write();
+   file.Close();
+   cout << "histograms2 saved in: " << indir+filename << endl;
+   hist_pt1->Reset();
+   hist_pt2->Reset();
+   hist_eta1->Reset();
+   hist_eta2->Reset();
+   hist_energy1->Reset();
+   hist_energy2->Reset();
+   hist_dPhi->Reset();
+   hist_kincut0->Reset();
+   hist_kincut1->Reset();
 }
