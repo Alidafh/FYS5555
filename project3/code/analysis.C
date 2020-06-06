@@ -58,6 +58,8 @@ void analysis::Begin(TTree * /*tree*/)
    nEvents4 = 0;
    nEvents5 = 0;
    nEvents6 = 0;
+   nEvents7 = 0;
+   nEvents8 = 0;
 
    //Define histograms
    hist_mass_CP2 = new TH1F("hist_mass_CP2","hist_mass_CP2 ;m_{#gamma#gamma}; Events", 30, 105, 160.);
@@ -65,19 +67,19 @@ void analysis::Begin(TTree * /*tree*/)
    hist_mass_CP1 = new TH1F("hist_mass_CP1","hist_mass_CP1 ;m_{#gamma#gamma}; Events", 30, 105, 160.);
    hist_mass_CP4 = new TH1F("hist_mass_CP4","hist_mass_CP4 ;m_{#gamma#gamma}; Events", 30, 105, 160.);
 
-   hist_pt1 = new TH1F("hist_pt1", "pt1; p_{t}^{#gamma#gamma}; Events", 30, 0, 200);
-   hist_pt2 = new TH1F("hist_pt2", "pt2; p_{t}^{#gamma#gamma}; Events", 30, 0, 200);
+   hist_pt1 = new TH1F("hist_pt1", "; p_{t, leading}; Events", 30, 0, 200);
+   hist_pt2 = new TH1F("hist_pt2", "; p_{t, subleading}; Events", 30, 0, 200);
 
-   hist_eta1 = new TH1F("hist_eta1", "eta1; #eta_{#gamma#gamma}; Events", 30, -3, 3);
-   hist_eta2 = new TH1F("hist_eta2", "eta2; #eta_{#gamma#gamma}; Events", 30, -3, 3);
+   hist_eta1 = new TH1F("hist_eta1", "; #eta_{#gamma}^{leading}; Events", 30, -3, 3);
+   hist_eta2 = new TH1F("hist_eta2", "; #eta_{#gamma}^{subleading}; Events", 30, -3, 3);
 
-   hist_energy1 = new TH1F("hist_energy1", "energy; #E_{#gamma#gamma}; Events", 30, 0, 500);
-   hist_energy2 = new TH1F("hist_energy2", "energy; #E_{#gamma#gamma}; Events", 30, 0, 500);
+   hist_energy1 = new TH1F("hist_energy1", "; E_{#gamma}^{leading}; Events", 30, 0, 500);
+   hist_energy2 = new TH1F("hist_energy2", "; E_{#gamma}^{subleading}; Events", 30, 0, 500);
 
    hist_dPhi = new TH1F("hist_dPhi", "; #Delta #phi_{#gamma#gamma}; Events", 30, -6, 6);
 
-   hist_kincut0 = new TH1F("hist_kincut0", "; E/m_{#gamma#gamma}; Events", 30, 0, 5);
-   hist_kincut1 = new TH1F("hist_kincut1", "; E/m_{#gamma#gamma}; Events", 30, 0, 5);
+   hist_phi1 = new TH1F("hist_phi1", "; #phi_{#gamma}^{leading}; Events", 30, -3.5, 3.5);
+   hist_phi2 = new TH1F("hist_phi2", "; #phi_{#gamma}^{subleading}; Events", 30, -3.5, 3.5);
 
    c = new TCanvas("c", "c", 1200, 600);
 }
@@ -140,15 +142,13 @@ Bool_t analysis::Process(Long64_t entry)
 
        for (unsigned  int i = 0; i < *photon_n; i++) {
           /*  Event preselection: The photon candidates in the event must have
-               ET > 25 GeV and |eta| < 2.37 (1.37<|eta|<1.52).
+               ET > 25 GeV and |eta| < 1.37 or 1.52<|eta|<2.37).
                Also check if photon is tight and isolated */
-          if(!(photon_E[i]/1000 > 25.0)){return kTRUE;}
-          if(!(abs(photon_eta[i]) < 2.37)){return kTRUE;}
-          if(!(abs(photon_eta[i]) > 1.37 || abs(photon_eta[i]) < 1.52)){return kTRUE;}
           if(!(photon_isTightID->at(i) == true)){return kTRUE;}
-          if(!(photon_ptcone30[i]/photon_pt[i] < 0.065 && photon_etcone20[i]/photon_pt[i] < 0.065)){return kTRUE;}
+          if(!(abs(photon_eta[i]) < 1.37 || 1.52 < abs(photon_eta[i]) < 2.37)){return kTRUE;}
+          if(!(photon_pt[i]/1000 > 25.0)){return kTRUE;}
+          if(!(photon_ptcone30[i]/photon_pt[i] < 0.05 && photon_etcone20[i]/photon_pt[i] < 0.065)){return kTRUE;}
        }
-
        nEvents3++;
 
        // create lorentz vectors
@@ -170,39 +170,39 @@ Bool_t analysis::Process(Long64_t entry)
        float dPhi = photon1.Phi() - photon2.Phi();
        //dPhi = dPhi < TMath::Pi() ? dPhi : 2*TMath::Pi() - dPhi;
        float mass = sqrt(2*photon1.Pt()*photon2.Pt()*(cosh(dEta) - cos(dPhi)));
-
        // Cut on known mass window
        if(!(mass > 105. && mass < 160.)){return kTRUE;}
        nEvents4++;
 
        // Kinematic selection requires ET/m > 0.35 for leading and 0.25 for subleading
-       hist_kincut0->Fill(photon1.E()/mass, scaleFactor);
-       if (!(photon1.E()/mass > 0.35 && photon2.E()/mass > 0.25)){return kTRUE;}
+       if (!(photon1.Pt() > 35 && photon2.Pt() > 25)){return kTRUE;}
+       if (!(photon1.Pt()/mass > 0.35 && photon2.Pt()/mass > 0.25)){return kTRUE;}
        nEvents5++;
-       hist_kincut1->Fill(photon1.E()/mass, scaleFactor);
+
 
        hist_pt1->Fill(photon1.Pt(), scaleFactor);
        hist_pt2->Fill(photon2.Pt(), scaleFactor);
-
        hist_eta1->Fill(photon1.Eta(), scaleFactor);
        hist_eta2->Fill(photon2.Eta(), scaleFactor);
-
        hist_energy1->Fill(photon1.E(), scaleFactor);
        hist_energy2->Fill(photon2.E(), scaleFactor);
-
+       hist_phi1->Fill(photon1.Phi(), scaleFactor);
+       hist_phi2->Fill(photon2.Phi(), scaleFactor);
        hist_dPhi->Fill(dPhi, scaleFactor);
 
        hist_mass_CP1->Fill(mass, scaleFactor);
 
        if(abs(photon1.Eta()) <= 0.75 && abs(photon2.Eta())<=0.75){
           /*Central region - best mass resolution*/
-          nEvents6++;
           hist_mass_CP2->Fill(mass, scaleFactor);
+          nEvents6++;
           if (photon_convType[0] == 0 && photon_convType[1] == 0) {
              /* only the unconverted ones*/
              hist_mass_CP3->Fill(mass, scaleFactor);
+             nEvents7++;
              return kTRUE;
           }
+          nEvents8++;
           hist_mass_CP4->Fill(mass, scaleFactor);
        }
     } // End of trigP
@@ -224,6 +224,7 @@ void analysis::Terminate()
 
    cout << "Total number of events prosessed:   " << nEvents_tot << endl;
    cout << "Number of events after cuts:        " << nEvents5 << endl;
+   cout << "preselection " << nEvents3 << endl;
    cout << "" <<endl;
 
    TString option = GetOption();
@@ -253,14 +254,22 @@ void analysis::write_info(string folder, TString option){
    ofstream info;
    TString indir = "output/"+folder+"/";
    TString filename2 = "info_"+option+".txt";
+   Float_t scaleFactor = 1.0;
+   Float_t sf = ((*XSection)*10.6*1000)/(*SumWeights);   //pb fb osv
+   if(p_option == "mc"){
+      scaleFactor = sf*(*mcWeight)*(*scaleFactor_PILEUP)*(*scaleFactor_PHOTON)*(*scaleFactor_PhotonTRIGGER);
+   }
    info.open(indir+filename2);
-   info << "total_events"        << "  " << nEvents_tot << "  " <<  "1" << endl;
+   info << "Scale_factor" << "  " << scaleFactor << endl;
+   info << "total_events"        << "  " << nEvents_tot << "  " << "1" << endl;
    info << "Diphoton_trigger"    << "  " << nEvents1    << "  " << nEvents1/nEvents_tot << endl;
    info << "Exactly_two_photons" << "  " << nEvents2    << "  " << nEvents2/nEvents_tot << endl;
    info << "Preselection_cuts"   << "  " << nEvents3    << "  " << nEvents3/nEvents_tot << endl;
    info << "Mass_window_cut"     << "  " << nEvents4    << "  " << nEvents4/nEvents_tot << endl;
    info << "Kinematic_selection" << "  " << nEvents5    << "  " << nEvents5/nEvents_tot << endl;
-   info << "Central_region"      << "  " << nEvents6    << "  " << nEvents6/nEvents_tot << endl;
+   info << "Central_region_total"<< "  " << nEvents6    << "  " << nEvents6/nEvents_tot << endl;
+   info << "Central_region_uncon"<< "  " << nEvents7    << "  " << nEvents7/nEvents_tot << endl;
+   info << "Central_region_conv" << "  " << nEvents8    << "  " << nEvents8/nEvents_tot << endl;
    info.close();
    cout << "info saved in:        " << filename2 << endl;
 }
@@ -276,8 +285,8 @@ void analysis::write_div(TString option){
    hist_energy1->Write();
    hist_energy2->Write();
    hist_dPhi->Write();
-   hist_kincut0->Write();
-   hist_kincut1->Write();
+   hist_phi1->Write();
+   hist_phi2->Write();
    file.Close();
    cout << "histograms2 saved in: " << indir+filename << endl;
    hist_pt1->Reset();
@@ -287,6 +296,6 @@ void analysis::write_div(TString option){
    hist_energy1->Reset();
    hist_energy2->Reset();
    hist_dPhi->Reset();
-   hist_kincut0->Reset();
-   hist_kincut1->Reset();
+   hist_phi1->Reset();
+   hist_phi2->Reset();
 }

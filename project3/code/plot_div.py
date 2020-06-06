@@ -8,12 +8,14 @@ import matplotlib.pyplot as plt
 ro.gStyle.SetOptFit(1)
 ro.gStyle.SetOptStat(0)
 ro.gStyle.SetPadLeftMargin(0.13)
+#ro.gStyle.SetPadBottomMargin(0.1)
+#ro.gStyle.SetFrameBorderMode(0);
 ro.gStyle.SetLegendBorderSize(1)
 ro.gStyle.SetPalette(1)
 ro.gStyle.SetGridStyle(2)
-ro.gStyle.SetPadLeftMargin(0.13)
 ro.TH1.AddDirectory(ro.kFALSE)
-ro.gROOT.SetBatch(1)
+ro.gStyle.SetErrorX(ro.kFALSE)
+ro.gROOT.SetBatch(ro.kTRUE)
 
 def sort_files(filenames):
     name_list= [re.match("div.(.*?).root", file).group(1) for file in filenames]
@@ -118,139 +120,128 @@ def combine(dict, option):
 
 ##########################################################################
 hist_names = ["hist_pt1", "hist_pt2", "hist_eta1", "hist_eta2", "hist_energy1",
-                "hist_energy2", "hist_dPhi", "hist_kincut0", "hist_kincut1"]
+                "hist_energy2", "hist_dPhi", "hist_phi1", "hist_phi2"]
 
-path = "/home/alida/Documents/uio/Master/FYS5555/project3/code/output/"
+path = "output/"
 f_path = path+"figures/"
 filenames = get_filenames(path)
 
 file_data, file_mc = sort_files(filenames)
 ###########################################################################
-
-def plot_lorentz(path, file, hist_names, option):
-    pt1, pt2, eta1, eta2, energy1, energy2, dPhi, kincut0, kincut1= make_dict(path, file, hist_names)
-
-    lead_pt, leg1, unc1 = stack_hist(pt1, option, " ;p_{T}^{leading}; Events")
-    lead_eta, leg2, unc1 = stack_hist(eta1, option, " ;#eta^{leading}; Events")
-    lead_energy, leg3, unc1= stack_hist(energy1, option, " ;E^{leading}; Events")
-
-    sub_pt, leg4, unc1= stack_hist(pt2, option, " ;p_{T}^{sub}; Events")
-    sub_eta, leg5, unc1= stack_hist(eta2, option, " ;#eta^{sub}; Events")
-    sub_energy, leg6, unc1= stack_hist(energy2, option, " ;E^{sub}; Events")
-
-    c = ro.TCanvas("c"+option,"c"+option, 600, 1200)
-    c.Divide(2,3)
-    c.cd(1)
-    lead_pt.Draw("hist")
-    leg1.Draw()
-    c.cd(3)
-    lead_eta.Draw("hist")
-    leg2.Draw()
-    c.cd(5)
-    lead_energy.Draw("hist")
-    leg3.Draw()
-    c.cd(2)
-    sub_pt.Draw("hist")
-    leg4.Draw()
-    c.cd(4)
-    sub_eta.Draw("hist")
-    leg5.Draw()
-    c.cd(6)
-    sub_energy.Draw("hist")
-    leg6.Draw()
-    c.Update()
-    #c.Draw()
-    Quiet(c.Print)(f_path+"CP1_"+option+"_PtEtaE.pdf]")
-    return c
-
-#pt1, pt2, eta1, eta2, energy1, energy2, dPhi, kincut0, kincut1 = make_dict(path, file_data, hist_names)
-#c_ptetaE_data = plot_lorentz(path, file_data, hist_names, "data")
-#c_ptetaE_mc = plot_lorentz(path, file_mc, hist_names, "mc")
 ###########################################################################
-
-def plot_kincut(data, mc):
-    kin_cut0 = combine(data[7], "data")
-    kin_cut1 = combine(data[8], "data")
-    kin_cut00 = combine(mc[7], "mc")
-    kin_cut11 = combine(mc[8], "mc")
-
-    kin_cut0.SetTitle("data;E_{T}/m_{#gamma#gamma}; Events")
-    kin_cut0.SetMarkerStyle(22)
-    kin_cut0.SetMarkerColor(221)
-    kin_cut0.SetFillStyle(0)
-    kin_cut1.SetTitle(";E_{T}/m_{#gamma#gamma}; Events")
-    kin_cut1.SetMarkerStyle(23)
-    kin_cut1.SetMarkerColor(213)
-    kin_cut1.SetFillStyle(0)
-
-    kin_cut00.SetTitle("MC;E_{T}/m_{#gamma#gamma}; Events")
-    kin_cut00.SetMarkerStyle(22)
-    kin_cut00.SetMarkerColor(221)
-    kin_cut00.SetFillStyle(0)
-    kin_cut11.SetTitle(";E_{T}/m_{#gamma#gamma}; Events")
-    kin_cut11.SetMarkerStyle(23)
-    kin_cut11.SetMarkerColor(213)
-    kin_cut11.SetFillStyle(0)
-
-    c = ro.TCanvas("c2", "c2", 600, 1200)
-    c.Divide(1,2)
-    c.cd(1)
-    kin_cut0.Draw("E hist")
-    kin_cut1.Draw("E hist same")
-    leg = ro.TLegend(0.66,0.70,0.96,0.92)
-    leg.SetTextSize(0.025)
-    leg.AddEntry(kin_cut0, "Before cut on E_{T}/m_{#gamma#gamma}", "p")
-    leg.AddEntry(kin_cut1, "After cut E_{T}/m_{#gamma#gamma}", "p")
-    leg.Draw()
-    c.cd(2)
-    kin_cut00.Draw("E hist")
-    kin_cut11.Draw("E hist same")
-    leg1 = ro.TLegend(0.66,0.70,0.96,0.92)
-    leg1.SetTextSize(0.025)
-    leg1.AddEntry(kin_cut0, "Before cut on E_{T}/m_{#gamma#gamma}", "p")
-    leg1.AddEntry(kin_cut1, "After cut E_{T}/m_{#gamma#gamma}", "p")
-    leg1.Draw()
-    c.Update()
-    c.Draw()
-    Quiet(c.Print)(f_path + "CP1_kin_cut.pdf]")
-    #c.Close()
-    return c
-
 data = make_dict(path, file_data, hist_names)
 mc = make_dict(path, file_mc, hist_names)
 
-#c_kin = plot_kincut(data, mc)
+def norm(hist, option, fix):
+    norm = 1
+    scale = norm/(hist.Integral())
+    hist.Scale(scale)
+    hist.GetYaxis().SetTitle("Events, normalised")
+    if option == "data":
+        hist.SetMarkerStyle(24)
+        hist.SetMarkerColor(1)
+    else:
+        hist.SetMarkerStyle(23)
+        hist.SetMarkerColor(221)
+    #if fix == 0:
+        #hist.GetYaxis().SetLabelSize(0.05)
+        #hist.GetYaxis().SetTitleSize(0.07)
+        #hist.GetYaxis().SetTitleOffset(1)
+        #hist.GetXaxis().SetLabelSize(0.05)
+        #hist.GetXaxis().SetLabelOffset(0.03)
+        #hist.GetXaxis().SetTitleSize(0.07)
+        #hist.GetXaxis().SetTitleOffset(1.4)
+    return hist
 
+def plot_lorentz(data, mc):
+    data_p1 = norm(combine(data[0], "data"), "data", 0)
+    data_p2  = norm(combine(data[1], "data"), "data",0)
+    data_eta1 = norm(combine(data[2], "data"), "data",0)
+    data_eta2 = norm(combine(data[3], "data"), "data",0)
+    data_E1 = norm(combine(data[4], "data"), "data",0)
+    data_E2 = norm(combine(data[5], "data"), "data",0)
+    data_phi1 = norm(combine(data[7], "data"), "data",0)
+    data_phi2 = norm(combine(data[8], "data"), "data",0)
+
+    mc_p1 = norm(combine(mc[0], "mc"), "mc",0)
+    mc_p2  = norm(combine(mc[1], "mc"), "mc",0)
+    mc_eta1 = norm(combine(mc[2], "mc"), "mc",0)
+    mc_eta2 = norm(combine(mc[3], "mc"), "mc",0)
+    mc_E1 = norm(combine(mc[4], "mc"), "mc",0)
+    mc_E2 = norm(combine(mc[5], "mc"), "mc",0)
+    mc_phi1 = norm(combine(mc[7], "mc"), "mc",0)
+    mc_phi2 = norm(combine(mc[8], "mc"), "mc",0)
+
+    ro.gStyle.SetPadTopMargin(0)
+    ro.gStyle.SetPadBottomMargin(0.3)
+
+    l1 = ro.TLegend(0.80,0.70,0.96,0.84)
+    l1.SetTextSize(0.042)
+    l1.AddEntry(data_p1, "Data", "p")
+    l1.AddEntry(mc_p1, "MC", "p")
+
+    j = ro.TCanvas("j", "j", 900, 1200)
+    j.SetCanvasSize(900,1200);
+    j.Divide(2, 4, 0.01, 0.01)
+
+    j.cd(1)
+    data_p1.Draw("E")
+    mc_p1.Draw("E same")
+    l1.Draw()
+    j.cd(2)
+    data_p2.Draw("E")
+    mc_p2.Draw("E same")
+    l1.Draw()
+    j.cd(3)
+    data_eta1.Draw("E")
+    mc_eta1.Draw("E same")
+    l1.Draw()
+    j.cd(4)
+    data_eta2.Draw("E")
+    mc_eta2.Draw("E same")
+    l1.Draw()
+    j.cd(5)
+    data_E1.Draw("E")
+    mc_E1.Draw("E same")
+    l1.Draw()
+    j.cd(6)
+    data_E2.Draw("E")
+    mc_E2.Draw("E same")
+    l1.Draw()
+    j.cd(7)
+    data_phi1.Draw("E")
+    mc_phi1.Draw("E same")
+    l1.Draw()
+    j.cd(8)
+    data_phi2.Draw("E")
+    mc_phi2.Draw("E same")
+    l1.Draw()
+    j.Update()
+    Quiet(j.SaveAs)(f_path+"CP1_PtEtaE.pdf]")
+    return j
+
+c_lor = plot_lorentz(data, mc)
 #############################################################################
 
 def plot_dphi(data, mc):
-    hist_dPhi1 = combine(data[6], "data")
-    hist_dPhi1.SetMarkerStyle(20)
-    hist_dPhi1.SetMarkerColor(221)
+    hist_dPhi1 = norm(combine(data[6], "data"), "data",1)
 
-    hist_dPhi2 = combine(mc[6], "mc")
-    hist_dPhi2.SetMarkerStyle(20)
-    hist_dPhi2.SetMarkerColor(213)
+    hist_dPhi2 = norm(combine(mc[6], "mc"), "mc",1)
 
-    l1 = ro.TLegend(0.66,0.80,0.96,0.92)
+    l1 = ro.TLegend(0.80,0.80,0.96,0.92)
     l1.SetTextSize(0.025)
-    l2 = ro.TLegend(0.66,0.80,0.96,0.92)
-    l2.SetTextSize(0.025)
-
-    c = ro.TCanvas("dphi", "dphi", 600, 1200)
-    c.Divide(1,2)
-    c.cd(1)
-    hist_dPhi1.Draw("EL")
     l1.AddEntry(hist_dPhi1, "Data", "p")
+    l1.AddEntry(hist_dPhi2, "MC(m_{H} = 125 GeV)", "p")
+    c = ro.TCanvas("dphi", "dphi", 800, 500)
+    c.SetCanvasSize(800,500);
+    c.SetTopMargin(0.1)
+    c.SetBottomMargin(0.1)
+    hist_dPhi1.Draw("E1")
+    hist_dPhi2.Draw("E1 same")
     l1.Draw()
-    c.cd(2)
-    hist_dPhi2.Draw("EL")
-    l2.AddEntry(hist_dPhi2, "Monte Carlo", "p")
-    l2.Draw()
-
     c.Update()
     c.Draw()
-    Quiet(c.Print)(f_path+"CP1_dPhi.pdf]")
+    Quiet(c.SaveAs)(f_path+"CP1_dPhi.pdf]")
     return c
 
 c_dphi = plot_dphi(data, mc)

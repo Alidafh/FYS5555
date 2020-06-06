@@ -28,13 +28,15 @@ public :
    TTree          *fChain = 0;   //!pointer to the analyzed TTree or TChain
 
    int nEvents_tot;
-   float nEvents1;
-   float nEvents2;
-   float nEvents3;
-   float nEvents4;
-   float nEvents5;
-   float nEvents6;
-   float nEvents7;
+   int nEvents1;
+   int nEvents2;
+   int nEvents3;
+   int nEvents4;
+   int nEvents5;
+   int nEvents6;
+   int nEvents7;
+   int nEvents8;
+   int nEvents9;
 
    TH1F *hist_pt1             = 0;
    TH1F *hist_pt2             = 0;
@@ -43,8 +45,8 @@ public :
    TH1F *hist_energy1         = 0;
    TH1F *hist_energy2         = 0;
    TH1F *hist_dPhi            = 0;
-   TH1F *hist_kincut0         = 0;
-   TH1F *hist_kincut1         = 0;
+   TH1F *hist_phi1            = 0;
+   TH1F *hist_phi2            = 0;
 
    TH1F *hist_mass_CP1        = 0;
    TH1F *hist_mass_CP2        = 0;

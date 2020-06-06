@@ -19,5 +19,25 @@ How to use:
      will be created. If these already exists, the existing folders will be used.
 
 
-4) plotting TBD
-   - do python plot_histograms.py
+4) There are two plotting programs: 'plot_histograms.py' and 'plot_div.py'.  
+
+   - To run both of these, do:
+
+      source plot.sh
+
+    Figures are saved in output/figures where files named "CP1_*" are for the
+    inclusive categody and so on.
+
+   1. 'plot_histograms.py' analyses the invariant mass distribution, doing
+      signal, signal+background and background only modeling. The figures are
+      saved in the folder output/figures. The category needs to be specified on
+      the command line:
+
+      python plot_histograms.py [number]
+
+     where [number] = 0,1,2,3 for cp1,cp2,cp3,cp4 respectively.
+
+   2. 'plot_div.py' plots the kinematic variables for the inclusive category(cp1)
+      after all cuts. Figures are saved in the folder output/figures To run this simply do:
+
+      python plot_div.py
