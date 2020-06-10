@@ -1,7 +1,7 @@
-\documentclass[12pt,aps, preprint, a4paper]{revtex4}
+\documentclass[10pt, aps, twocolumn, a4paper, nofootinbib]{revtex4}
 \usepackage[T1]{fontenc} %for å bruke æøå
 \usepackage[utf8]{inputenc}
-\usepackage[margin=0.7in]{geometry} % adjust margins etc. 
+%\usepackage[margin=0.7in]{geometry} % adjust margins etc. 
 \usepackage{fancyhdr} %control headers and footers
 \usepackage[pdftex]{graphicx}   % add images 
 \usepackage{subfig} % allow sub-floats
@@ -77,23 +77,299 @@
 \date{\today}
 
 \begin{abstract}
-    \centering Abstract here
+    \centering 
+    In this report analysis of the diphoton sample in the 13 TeV ATLAS Open Data is preformed in the search for the Higgs boson mass in the decay channel $H\rightarrow\gamma\gamma$. The data is collected at ATLAS from pp-collisions in the LHC with $\sqrt{s} = 13$ TeV and the integrated luminosity $10$fb$^{-1}$. 
 \end{abstract}
 \maketitle
 
 \section{Introduction}
 
-\citep{MeasureHiggs13TeV}
-\citep{PhysRevD.98.030001.2018}
-\citep{OpenData2020yy}
+The leading theory to describe how the fundamental particles interact is the Standard model(SM) of particle physics. In the standard model is the mechanism that describes the origin of mass for the fundamental particles, the Brout-Englert-Higgs mechanism, named after the physicists that discovered it. With this mechanism also came the prediction of another fundamental particle, the scalar spin-0 Higgs boson, but it does not give any predictions on its mass. One of the main goals when building the Large Hadron Collider (LHC) at CERN was the discovery(or exclusion) of the Higgs boson. The Higgs boson mass is a fundamental constant of nature, and its measurement is required for precise calculations of high-energy processes. It is also thought to play a role for the stability of our universe with respect to quantum fluctuations.\\
 
-\section{The ALTAS Detector}
-\section{ATLAS Open Data}
-\section{Data Analysis}
-\section{Results and Discussion}
-\section{Conclusion}
+The two beams circulating in the LHC are made up of many proton bunches, each containing $10^{11}$ protons, spaced 25 ns apart. The measure of how many collisions that can be produced in the detector per area per second is the Luminosity, and this depends on the number of protons in each bunch, the number of bunches and the beam size at the collision point. The integral of luminosity over time reflects the amount of data taken. \\
 
-\newpage 
+A Higgs boson candidate was discovered in 2012 by the ATLAS and CMS experiments at CERN using data from the 7 TeV and 8 TeV runs of $pp$-collisions at the LHC. Measurements of its properties are consistent with the expected SM Higgs boson, and its mass is determined to be  $m_H = 125.09 \pm 0.21 \pm 0.11$ GeV. The ATLAS collaboration announced\citep{ObsNewParticle2012} the $95\%$ exclusion of the Higgs in the mass range $111-559$ GeV, except for a narrow region $122-131$ GeV where an excess of events with significance $5.9 \sigma(p_0 = 1.7\times10^{-9})$ was observed (In the entire mass range of $110-600$ GeV, the global significance of the excess was $5.1\sigma$).
+
+\section{ATLAS detector}
+
+One of the four major experiments at the LHC is the ATLAS (A Toroidal LHC ApparatuS) experiment\citep{ATLAS_2008}. ATLAS is a general-purpose detector designed to exploit the full discovery potential and the large range of physics opportunities that the LHC provides. Because we are unable to store all the data from all the collisions, the ATLAS detector has a triggering system that filters what events are interesting and what stem from well known processes. Interesting processes are rare, so we want to get as many as possible. Figure \ref{fig:ATLAS_detector} shows an illustration of the detector and its different components.\\ 
+
+\subsection{Detector geometry}
+The ATLAS detector uses a right handed coordinate system with an origin at the interaction point (IP) in the center of the detector,
+the x-axis pointing towards the center of the LHC ring, the y axis pointing up and the z-axis pointing along the beam line as shown in figure \ref{fig:ALTAS_geometry}. Cylindrical coordinates $(r,\phi)$ are used in the transverse plane, where $\phi$ is the azimuthal angle around the beam line, ranging between $-\pi$, $\pi$ with respect to the x-axis. The polar angle $\theta$ is measured from the z-axis and is in the range $[0,\pi]$. \\
+
+\begin{figure}
+\centering 
+\includegraphics[width = 0.7\linewidth]{ATLAS_geometry.png}
+\caption{Illustration of the coordinate system used in ATLAS. \citep{Schott_2014}\label{fig:ALTAS_geometry}}
+\end{figure}
+
+The collisions take place in the center-of-mass(COM) frame of the $pp$ system, which is not the COM frame of the colliding partons. The momentum and energy component of the partons along the z-axis is unknown, so we define the transverse components in terms of their projections on the x-y plane, 
+\begin{align}
+E_T &= E\sin\theta,  \quad p_T = E\sin\theta \label{eq:etpt}
+\end{align} 
+\begin{align}
+p_x &= p_T\cos\phi, \quad p_y = p_T\sin\phi, \quad p_z = p\cos\theta \label{eq: pxpypz}
+\end{align}
+
+It is useful to express the angles in therms of rapidity, $y$, which is invariant under a boost along the beam line, $\Delta y = \Delta y'$. For high energy jets, the jet mass is small compared to the jet energy and $p_z \approx E\cos\theta$. 
+
+\begin{align}
+y = \frac{1}{2}\ln\left(\frac{E+p_z}{E-p_z}\right)\approx\frac{1}{2}\ln\left(\frac{1+\cos\theta}{1-\cos\theta}\right) = \frac{1}{2}\ln\left(\cot^2 \frac{\theta}{2}\right)
+\end{align}
+
+Therefore the pseudorapidity, $\eta$, can be used in place of the rapidity at high energy
+
+\begin{align}
+\eta = -\ln\left(\tan\frac{\theta}{2}\right) \label{eq:pseudorapidity}
+\end{align}
+
+The distance in $\eta-\phi$ space is defined as,
+
+\begin{align}
+\Delta R = \sqrt{(\Delta\eta)^2 + (\Delta\phi)^2} \label{eq:delta_R}
+\end{align}
+
+\subsubsection{Invariant mass}
+The invariant mass of a diphoton system can be found using the transverse momentum of the photons, the azimuthal angle $\phi$ between the photons and their values of pseudorapidity $\eta$, 
+\begin{align}
+m_{\gamma\gamma} = \sqrt{2p_{T,1}p_{T,2}(\cosh\Delta\eta - cos\Delta\phi)} \label{eq:invariant_mass}
+\end{align}
+
+where $\Delta\eta = \eta_1 - \eta_2$ and $\Delta\phi = \phi_1 - \phi_2$
+
+\subsection{Detector components\label{sec:ATLAS_detector_components}}
+The inner detector (ID)\citep{ID2012} consists of three detector components immersed in a 2T solenoidal magnetic field parallel to the beam axis, and measures the direction, and momentum of charged particles. The innermost component is a Pixel detector consisting of three silicon pixel layers. The innermost layer (b-layer) is designed for reconstruction of particles with longer lifetimes that will travel a short distance from the primary vertex before decaying. Following the pixel detector is the SemiConductor Tracker (SCT) consisting of silicon microstrips which surrounds the pixel detector layers. The two first silicon detectors provide precision tracking within the pseudorapidity range $|\eta| < 2.5$. The last component is a Transition Radiation Tracker (TRT) which is composed of gaseous proportional counter-straws embedded in a radiator material. The straws are filled with a $70\%$ Xe, $27\%$ CO2 and $3\%$ O$_2$ gas mixture. The TRT offers discrimination between electrons and charged hadrons for $|\eta|<2.0$ \citep{MeasureHiggs13TeV}.\\
+
+The ID is surrounded by a lead-liquid argon (LAr) electromagnetic calorimeter (ECAL) with accordioshape absorbers and electrodes. The ECAL consists of a barrel section that covers the pseudorapidity region $|\eta| < 1.475$, and two end-cap regions, one covering $1.375 < |\eta| < 2.5$ and the other covering $2.5 |\eta|< 3.2$. In between the barrel and end-cap region($1.37 <|\eta|<1.52$) is a section of mostly cables and cryostat walls that give bad precision. In the region matching the ID pseudorapidity, the ECAL is segmented into three layers. First there is a layer with a fine $\eta$ segmentation in order to discriminate the isolated photons from neutral handrons decaying to pairs of close-by photons such as $\pi^0\rightarrow \gamma\gamma$. The second layer is where most of the energy is collected, and together with the first layer it is possible to measure the shower direction without making any assumptions on the photons production point. The third layer is less segmented and collects the tails of the energy distribution.\\
+
+The next component of ATLAS is the hadron calorimeter (HCAL), which consists of three parts, 1) an iron-scintillator tile calorimeter in the barrel, covering the central region $|\eta|< 1.7$. 2) the liquid-argon hadronic end-cap calorimeters covering the range $1.5 < |\eta|<3.2$, and 3) the liquid-argon forward calorimeter which covers the range $3.1 < |\eta| < 4.9$. The three systems are closely coupled together giving a hermetic design which minimises the energy losses in cracks and limits the backgrounds that might reach the muon spectrometer (MS) that surrounds the calorimeters. The MS consists of separate trigger and precision tracking chambers in the magnetic field provided by three large toroids. The momentum of charged particles are measured in the pseudorapidity ranges $|\eta|<2.4$ and $|\eta|<2.7$ for the trigger and precision tracking chambers respectively. Figure \ref{fig:ATLAS_tracks} illustrates the interaction of particles with different components of the detector.
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{ATLAS_tracking.jpg}
+\caption{Illustration of particle interactions in the ATLAS detector. The dotted lines indicate that the particle does not interact. (Copyright CERN) \label{fig:ATLAS_tracks}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{ATLAS_detector.jpg}
+\caption{The ATLAS detector and its different components. The people at the bottom and to the left of the detector gives a good impression of how large the detector really is. (Copyright CERN)\label{fig:ATLAS_detector}}
+\end{figure}
+
+\section{The Higgs boson production and decay}
+
+\subsection{Higgs production \label{sec:production}}
+The main production mechanisms for the Higgs boson at the LHC are gluon-gluon fusion (ggH), vector-boson fusion (VBF), production with a gauge boson (ZH/WH) and production associated with two top quarks (ttH). The leading feynman diagrams for these processes are shown in \ref{fig:higgs_production_feynman}. The most dominant production mechanism at the LHC is the gluon-gluon fusion mediated by the exchange of a virtual top quark, with a contribution of $88.2\%$ of the total cross section at $\sqrt{s} = 13$TeV\citep{PhysRevD.98.030001.2018}. The second most dominating process will be the VBF where scattering of two quarks produces a Higgs boson, with a contribution to the total cross section of $6.8\%$. The associated processes WH, ZH and ttH have a contribution to the cross section of $2.5\%$, $1.6\%$, and $0.9\%$ respectively. The cross section as a function of center of mass energy is shown in \ref{fig:H_prod_cross}
+
+
+\begin{figure}
+\centering
+\subfloat[ggH]{\includegraphics[width=0.4\linewidth]{ggH.png}}
+\subfloat[VBF]{\includegraphics[width=0.4\linewidth]{VBF.png}}
+\vspace{0.1cm}
+\subfloat[ttH]{\includegraphics[width=0.4\linewidth]{ttH.png}}
+\subfloat[ZH/WH]{\includegraphics[width=0.4\linewidth]{HWHZ.png}}
+\caption{Leading order feynman diagrams for the main Higgs production mechanisms\label{fig:higgs_production_feynman}}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width = 0.68\linewidth]{higgs_production_cross.eps}
+\caption{The SM Higgs boson production cross sections as a function of the center of mass energy, $\sqrt{s}$, for $pp$ collisions at the LHC \citep{PhysRevD.98.030001.2018} \label{fig:H_prod_cross}}
+\end{figure}
+
+\subsection{The $H\rightarrow \gamma \gamma$ decay}
+The higgs boson has multiple decay channels, this analysis considers the decay $H\rightarrow\gamma\gamma$ in which the Higgs boson decays to a pair of photos though a quantum loop process involving massive charged particles, mainly the W-boson or top quark as illustrated in figure \ref{fig:Hyy_feynman}. This decay channel is rare, with a branching ratio of $2.27 \times 10^{-3}$ for $m_H=125$GeV, \citep{PhysRevD.98.030001.2018}, but because the final state particles can be precisely measured the resolution of the reconstructed $m_H$ is very good.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\linewidth]{Hyy.png}
+\caption{Feynman diagram of the decay $H\rightarrow\gamma\gamma$ \label{fig:Hyy_feynman}}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\linewidth]{../code/output/figures/CP1_stacked_histograms.pdf}
+	\caption{Contribution to the data from each of the data-sets. Top is stacked histograms for for the different Higgs production processes, and bottom is the data. This is only included as an interesting plot. \label{fig:CP1_stacked}}
+\end{figure}
+
+\section{Event selection}
+
+\subsection{Preselection}
+
+Events are preselected\footnote{Selection applied before treating the photons separately} using a diphoton trigger which requires the presence of two clusters of energy deposited in the ECAL with $E_T > 25$ GeV each. The two photon candidates must be in the fiducial region of the calorimeter with $|\eta|< 1.37$ or $1.52 < |\eta|<2.37$ so the barrel-endcap transition regions where the precision is low are excluded. The photons then have to pass the tight identification criteria which are used to reduce the contamination from the background, primarily associated with neutral hadrons in jets decaying into photon pairs. These criteria adds information from the finely segmented strip layer of the ECAL described in section \ref{sec:ATLAS_detector_components}. These tight criteria are optimised separately for unconverted and converted photon candidates, and are described in \citep{Aaboud_2019_tight}. For the ALTAS Open data, information of weather the photons have passed these criteria is stored in a boolean variable.\\
+
+An isolation requirement is then applied in order to further suppress the background photons from the prompt photons. Background photons are often accompanied by surrounding hadron activity and therefore have poor isolation. This isolation is defined based on the transverse energy flow in an isolation cone around the photon with $R = \sqrt{\eta^2 -\phi^2}$. The energy flow is characterised by 1) Calorimeter isolation, which is the sum of the energy of the clusters in a cone $R = 0.2$, and 2) Track isolation, which is the scalar sum of transverse energy of the tracks within a cone $R = 0.3$. In this analysis, candidates with a calorimeter isolation larger than $5\%$ of the photon transverse momentum are rejected, and candidates with a track isolation larger than $5\%$ of the photon transverse momentum are rejected.\\
+
+\subsection{Kinematic selection}
+
+After the preselection, the photon candidate with the highest $p_T$ is labelled \textit{leading} and the other is labelled \textit{subleading}, the leading photon are required to have $E_T> 35$ GeV and $E_T > 25$GeV respectively. A variable $p_T$ cu is then applied to the photons, where the leading photon is required to have $p_T/m_{\gamma\gamma} > 0.35$ and the subleading photon is required to have $p_T/m_{\gamma\gamma} > 0.25$. Using variable $p_T$ thresholds that are scaled by mass prevents distortions in the low end of the invariant mass spectrum \citep{CMS_Hyy2018}. The effect of this $p_T$ cut on the inclusive samples can be seen in the two top plot of \ref{fig:PtEtaE}. The invariant mass of the diphoton system is found using equation \ref{eq:invariant_mass}, with $p_{T,1}$ and $p_{T,2}$ as the transverse momentum of the leading and subleading photon candidate respectively. This analysis considers a mass window of $105$ GeV $\leq m_{\gamma\gamma} \leq 160$ GeV, and the number of events and fraction of the original number is summerized in table \ref{tab:cutflow}. The pseudorapidity of the photons are also shown in figure \ref{fig:PtEtaE}, where we can clearly see the cut on the barrel-endcap region.\\
+
+\begin{table}
+\centering
+\caption{Cut flow of the analysis event selection shows the number of events in data($N_D$) and MC($N_{mc}$) samples after each cut, and the fraction of events after the cut. The number of MC events are not scaled. \label{tab:cutflow}}
+\setlength{\tabcolsep}{4pt} 
+\begin{tabular}{ c | c  c | c  c }
+\hline
+Cut & $N_D $ & $\%$ & $N_{mc}$ & $\%$ \\ 
+\hline
+Total events & $7798424$ & $100.0$ & $2473335$ & $100.0$ \\
+Diphoton trigger & $7798424$ & $100.0$ & $2473335$ & $100.0$ \\
+Two photons & $7772074$ & $99.7$ & $2434618$ & $98.4$ \\
+Preselection & $335772$ & $4.3$ & $1584334$ & $64.1$ \\
+Mass window & $88446$ & $1.1$ & $1582958$ & $64.0$\\
+Kinematic selection & $71587$ & $0.9$ & $1456541$ & $58.9$ \\
+\hline
+CP1 (inclusive) & $71587$ & $0.9$ & $1456541$ & $58.9$ \\
+CP2 & $13536$ & $0.2$ & $376687$ & $15.2$ \\
+CP3 & $8113$ & $0.1$ & $222146$ & $9.0$ \\
+CP4 & $5423$ & $0.1$ & $154541$ & $6.2$ \\
+\hline
+\end{tabular}
+\end{table}
+
+The difference in azimuthal angle $\Delta\phi_{\gamma\gamma}$ for the leading and subleading photons is shown in figure \ref{fig:dPhi_CP1}. From momentum conservation it can be expected that the photons are produced back-to back with $\Delta\phi = \pm \pi$ which corresponds well with the figure, indicating that the Higgs boson was produced without a lot of motion orthogonal to the beam direction. 
+
+\begin{figure}
+\includegraphics[width=\linewidth]{../code/output/figures/CP1_dPhi.pdf}
+\caption{The difference in azimuthal angle between the leading and subleading photon candidate. The top figure is the data, and the bottom figure is the MC samples. \label{fig:dPhi_CP1}}
+\end{figure}
+
+\subsection{Event categories}
+After the event selection is done, the events are further separated into three categories defined by weather the photons are in the central region of the detector and if both photons are converted or unconverted. The categories used are: 
+
+\begin{itemize}
+\itemsep0em 
+\item[CP1] Inclusive category, both unconverted and converted photons in the fiducial region of the detector. 
+\item[CP2] Central Inclusive, both unconverted and converted photons in the central region $|\eta|<0.75$.
+\item[CP3] Central unconverted, both photons are unconverted and in the central region of the detector.
+\item[CP4] Central converted, both photons are converted and in the central region of the detector.
+\end{itemize}
+
+The number of events in each category after all cuts is listed in \ref{tab:cutflow}. The signal yield for each of the production processes described in section \ref{sec:production} are listed in table \ref{tab:signal_yield}. The signal yield for ggH and VBF is somewhat higher than the expected signal yield, while for WH, ZH and the yield from MC is slightly lower. The fraction from the ttH signal sample is a lot lower than expected. 
+
+\begin{table}
+\centering 
+\caption{Expected signal events for each category from the MC samples with $m_{H} = 125$ GeV. CP1 is the inclusive category, and SM are the expected fraction of signal events from the SM, found in the review of particle physics. \citep{PhysRevD.98.030001.2018}  \label{tab:signal_yield}}
+\setlength{\tabcolsep}{4pt} % Default value: 6pt
+\begin{tabular}{ c  c  c  c  c  c  c}
+\hline
+& Total & ggH [$\%$] & VBF[$\%$] & WH[$\%$] & ZH[$\%$] & ttH[$\%$] \\
+\hline
+CP1 & 407.05 & 89.771 & 7.516 & 1.392 & 1.319 & 0.002 \\
+CP2 & 101.83 & 89.803 & 7.723 & 1.227 & 1.245 & 0.003 \\
+CP3 &  60.27 & 89.768 & 7.745 & 1.241 & 1.243 & 0.003\\
+CP4 &  41.56 & 89.854 & 7.692 & 1.205 & 1.247 & 0.003\\
+\hline
+SM  & & 88.2 & 6.86 & 2.48 & 1.59 & 0.9 \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Signal and background modelling}
+
+The invariant mass of the Higgs boson signal shape is modelled by fitting a Gaussian function\footnote{Gaussian distribution: $P(x) = C e^{-\frac{(x-\mu)^2}{2\sigma^2}}$ where $\mu$ and $\sigma^2$ is the mean and variance of the distribution} to monte carlo samples simulating the Higgs boson production mechanisms in the mass window $\pm 5$GeV around $125$GeV. The simulations are weighted to account for pileup, photon efficiency and trigger efficiency, as well as scaling the to the correct cross section and integrated luminosity, Figure \ref{fig:signal_fit_CP1} shows the signal model fit for the inclusive category. \\
+
+
+The background is estimated from data with a 3rd order polynomial fit in the full invariant mass range. The result of a background only fit is shown in figure \ref{fig:bkgonly}. The lower inset shows the residuals of the data after subtracting the background fit. \\
+
+
+The signal+background is modelled using a combination of the Gaussian from the signal fit and a 3rd order polynomial with free parameters. This function is fitted to data in the full invariant mass range. The fit is shown in \ref{fig:signal+bkg}, where the lower inlay shows the residuals after subtracting the fit from the data. 
+
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{../code/output/figures/CP1_signal_fit.pdf}
+\caption{Gaussian fit to signal MC samples for the inclusive category with $m_H=125$ GeV. The vertical gray lines shows the interval containing $68.3\%$ of the distribution and the horisontal line shows the full width at half maximum. \label{fig:signal_fit_CP1}}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\linewidth]{../code/output/figures/CP1_bkg_only_fit.pdf}
+\caption{Background only fit to the inclusive data sample using a 3rd order polynomial in the mass region $105-160$GeV. The lower inlay shows the residuals of the data wrt the fit, where the green and yellow standard deviation bands include statistical uncertainties in the background component of the fit.  \label{fig:bkgonly}}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{../code/output/figures/CP1_sb_fit.pdf}
+\caption{Combined signal+background fit to the data in the mass region  $105-160$GeV. The lower inlay shows the residuals of the data wrt the fit, and the green and yellow standard deviation bands include statistical uncertainties in the background component of the fit. \label{fig:signal+bkg}}
+\end{figure}
+
+
+\section{Results}
+
+The distributions of the invariant mass for the diphotons in the inclusive category is shown in figure \ref{fig:bkgsub_CP1}. A small excess can be seen around $m_{\gamma\gamma}= 125$ GeV. The lower figure of figure \ref{fig:bkgsub_CP1} shows the residuals after the background component is removed. Figure \ref{fig:bkgsub_rest} shows this plot for the remaining categories. An estimate of the significance \footnote{$Z_{exp} = \sqrt{2\left[(s+b)\ln\left(1+\frac{s}{b}\right)-s\right]}$ and\\ $Z_{obs}=\sqrt{2\left[n_{obs}\ln\frac{n_{obs}}{b} - n_{obs}+b\right]}$\citep{dataanalysis}} for the signal + background hypothesis in a mass window $120-130$ GeV by counting the number of expected background events, expected number of signal events and the actual number of observed events yields an expected p-value of $9.13\times10^{-4}$ which translates into an expected significance of $3.12\sigma$. The observed p-value in this region is $1.26\times10^{-3}$, which translates to $Z_{obs} = 3.02\sigma$. For the background only hypothesis, the $p_0$-value in the signal region $120-130$ GeV is $1.01\times 10^{-1}$ which would translate to an observed significance $1.28\sigma$.
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{../code/output/figures/CP1_bkg_subtracted.pdf}
+\caption{Diphoton invariant mass spectrum. The red line shows the signal+background model, and the blue is the background component. The inlay shows the residuals of the data and the s+b model after background is subtracted. \label{fig:bkgsub_CP1}}
+\end{figure}
+
+Modelling the signal using a Gaussian distribution renders a $\chi^2/ndf = 1207/3$, with a very low probability $P(\chi^2\geq 1207) \approx 0\%$, which is a lot lower than the $5\%$ minimum for a decent fit. The results of the signal+background fit and the background only fit has a $\chi^2/ndf$ much closer to 1 ($0.76$ and $1.08$ respectively).
+
+\section{Conclusion/Summary}
+
+An analysis of the 13TeV ATLAS Open data for $H\rightarrow \gamma\gamma$ is preformed, using MC samples to model a Higgs boson signal, while background is estimated from data. An excess can be seen around $125$ GeV, however, in order to determine if this excess is more than a statistical fluctuation in the background, a proper statistical analysis needs to be preformed.
+
+\newpage
 \bibliography{ref}
+
+\newpage
+{
+\onecolumngrid
+\centering
+\newpage
+\section{Appendix}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{../code/output/figures/CP1_PtEtaE.pdf}
+\caption{Distributions of $p_{t,\gamma}$, $\eta_{\gamma}$, $E_{\gamma}$ and $\phi_{\gamma}$ for the leading(left) and subleading(right) photons. Data is represented by white circles and MC samples for $m_H = 125$GeV is represented by pink triangles. \label{fig:PtEtaE}}
+\end{figure}
+
+\newpage
+
+\begin{figure}[H]
+\centering
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP2_stacked_histograms.pdf}}
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP3_stacked_histograms.pdf}}
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP4_stacked_histograms.pdf}}
+\caption{Contribution to the data from each of the data-sets. Top is stacked histograms for for the different Higgs production processes, and bottom is the data. \label{fig:stacked_rest}}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP2_signal_fit.pdf}}
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP3_signal_fit.pdf}}
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP4_signal_fit.pdf}}
+\caption{Gaussian fit to signal MC samples for the remaining categories with $m_H=125$ GeV. The vertical gray lines shows the interval containing $68.3\%$ of the distribution and the horisontal line shows the full width at half maximum.\label{fig:signal_fit_rest}}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP2_sb_fit.pdf}}
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP3_sb_fit.pdf}}
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP4_sb_fit.pdf}}
+\caption{Combined signal+background fit to the data for the remaining categories in the mass region  $105-160$GeV. The lower inlay shows the residuals of the data wrt the fit, and the green and yellow standard deviation bands include statistical uncertainties in the background component of the fit.\label{fig:s+b_fit_rest}}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP2_bkg_only_fit.pdf}}
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP3_bkg_only_fit.pdf}}
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP4_bkg_only_fit.pdf}}
+\caption{Background only fit to the remaining categories using a 3rd order polynomial in the mass region $105-160$GeV. The lower inlay shows the residuals of the data wrt the fit, where the green and yellow standard deviation bands include statistical uncertainties in the background component of the fit. \label{fig:bkgonly_rest}}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP2_bkg_subtracted.pdf}}
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP3_bkg_subtracted.pdf}}
+\subfloat[]{\includegraphics[width=0.3\linewidth]{../code/output/figures/CP4_bkg_subtracted.pdf}}
+\caption{Diphoton invariant mass spectrum. The red line shows the signal+background model, and the blue is the background component. The inlay shows the residuals of the data and the s+b model after background is subtracted.\label{fig:bkgsub_rest}}
+\end{figure}
+
+\par}
+
 
 \end{document}

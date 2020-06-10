@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Stuff
+/code-old/*
+/GamGam/*
+/papers/*
+/tmp/*
