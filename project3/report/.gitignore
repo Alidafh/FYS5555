@@ -31,4 +31,6 @@
 *.synctex.gz(busy)
 *.pdfsyncl
 
-
+## Remove the images in this folder
+*.jpg
+*.png
