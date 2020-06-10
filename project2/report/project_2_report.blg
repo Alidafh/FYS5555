@@ -1,0 +1,62 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: project_2_report.aux
+The style file: unsrtnat.bst
+Database file #1: ref.bib
+You're missing a field name---line 4 of file ref.bib
+ :     
+ :     %howpublished = "",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Name 1 in "Kobelev, and Belov, A. and Mavromichalaki, E and Gerontidou, M. and Yanke, Victor" has a comma at the end for entry Kobelev
+while executing---line 1233 of file unsrtnat.bst
+Name 1 in "Kobelev, and Belov, A. and Mavromichalaki, E and Gerontidou, M. and Yanke, Victor" has a comma at the end for entry Kobelev
+while executing---line 1315 of file unsrtnat.bst
+Name 1 in "Kobelev, and Belov, A. and Mavromichalaki, E and Gerontidou, M. and Yanke, Victor" has a comma at the end for entry Kobelev
+while executing---line 1315 of file unsrtnat.bst
+Warning--empty journal in Kobelev
+Warning--empty journal in EEEwebsite
+Warning--empty year in EEEwebsite
+Warning--empty year in EEEwebsite
+You've used 6 entries,
+            2481 wiz_defined-function locations,
+            601 strings with 9766 characters,
+and the built_in function-call counts, 8289 in all, are:
+= -- 192
+> -- 1504
+< -- 2
++ -- 508
+- -- 496
+* -- 1118
+:= -- 1769
+add.period$ -- 25
+call.type$ -- 6
+change.case$ -- 12
+chr.to.int$ -- 6
+cite$ -- 10
+duplicate$ -- 111
+empty$ -- 198
+format.name$ -- 504
+if$ -- 1393
+int.to.chr$ -- 1
+int.to.str$ -- 7
+missing$ -- 6
+newline$ -- 45
+num.names$ -- 18
+pop$ -- 45
+preamble$ -- 1
+purify$ -- 6
+quote$ -- 0
+skip$ -- 61
+stack$ -- 0
+substring$ -- 76
+swap$ -- 12
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 42
+warning$ -- 4
+while$ -- 16
+width$ -- 0
+write$ -- 95
+(There were 4 error messages)

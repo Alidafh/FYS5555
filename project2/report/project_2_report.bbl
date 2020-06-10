@@ -1,0 +1,125 @@
+\begin{thebibliography}{6}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Tanabashi et~al.(2018)Tanabashi, Hagiwara, Hikasa, Nakamura, Sumino,
+  Takahashi, Tanaka, Agashe, Aielli, Amsler, Antonelli, Asner, Baer, Banerjee,
+  Barnett, Basaglia, Bauer, Beatty, Belousov, Beringer, Bethke, Bettini,
+  Bichsel, Biebel, Black, Blucher, Buchmuller, Burkert, Bychkov, Cahn, Carena,
+  Ceccucci, Cerri, Chakraborty, Chen, Chivukula, Cowan, Dahl, D'Ambrosio,
+  Damour, de~Florian, de~Gouv\^ea, DeGrand, de~Jong, Dissertori, Dobrescu,
+  D'Onofrio, Doser, Drees, Dreiner, Dwyer, Eerola, Eidelman, Ellis, Erler,
+  Ezhela, Fetscher, Fields, Firestone, Foster, Freitas, Gallagher, Garren,
+  Gerber, Gerbier, Gershon, Gershtein, Gherghetta, Godizov, Goodman, Grab,
+  Gritsan, Grojean, Groom, Gr\"unewald, Gurtu, Gutsche, Haber, Hanhart,
+  Hashimoto, Hayato, Hayes, Hebecker, Heinemeyer, Heltsley, Hern\'andez-Rey,
+  Hisano, H\"ocker, Holder, Holtkamp, Hyodo, Irwin, Johnson, Kado, Karliner,
+  Katz, Klein, Klempt, Kowalewski, Krauss, Kreps, Krusche, Kuyanov, Kwon,
+  Lahav, Laiho, Lesgourgues, Liddle, Ligeti, Lin, Lippmann, Liss, Littenberg,
+  Lugovsky, Lugovsky, Lusiani, Makida, Maltoni, Mannel, Manohar, Marciano,
+  Martin, Masoni, Matthews, Mei\ss{}ner, Milstead, Mitchell, M\"onig, Molaro,
+  Moortgat, Moskovic, Murayama, Narain, Nason, Navas, Neubert, Nevski, Nir,
+  Olive, Pagan~Griso, Parsons, Patrignani, Peacock, Pennington, Petcov, Petrov,
+  Pianori, Piepke, Pomarol, Quadt, Rademacker, Raffelt, Ratcliff, Richardson,
+  Ringwald, Roesler, Rolli, Romaniouk, Rosenberg, Rosner, Rybka, Ryutin,
+  Sachrajda, Sakai, Salam, Sarkar, Sauli, Schneider, Scholberg, Schwartz,
+  Scott, Sharma, Sharpe, Shutt, Silari, Sj\"ostrand, Skands, Skwarnicki, Smith,
+  Smoot, Spanier, Spieler, Spiering, Stahl, Stone, Sumiyoshi, Syphers, Terashi,
+  Terning, Thoma, Thorne, Tiator, Titov, Tkachenko, T\"ornqvist, Tovey,
+  Valencia, Van~de Water, Varelas, Venanzoni, Verde, Vincter, Vogel, Vogt,
+  Wakely, Walkowiak, Walter, Wands, Ward, Wascko, Weiglein, Weinberg, Weinberg,
+  White, Wiencke, Willocq, Wohl, Womersley, Woody, Workman, Yao, Zeller, Zenin,
+  Zhu, Zhu, Zimmermann, Zyla, Anderson, Fuller, Lugovsky, and
+  Schaffner]{PhysRevD.98.030001}
+M.~Tanabashi, K.~Hagiwara, K.~Hikasa, K.~Nakamura, Y.~Sumino, F.~Takahashi,
+  J.~Tanaka, K.~Agashe, G.~Aielli, C.~Amsler, M.~Antonelli, D.~M. Asner,
+  H.~Baer, Sw. Banerjee, R.~M. Barnett, T.~Basaglia, C.~W. Bauer, J.~J. Beatty,
+  V.~I. Belousov, J.~Beringer, S.~Bethke, A.~Bettini, H.~Bichsel, O.~Biebel,
+  K.~M. Black, E.~Blucher, O.~Buchmuller, V.~Burkert, M.~A. Bychkov, R.~N.
+  Cahn, M.~Carena, A.~Ceccucci, A.~Cerri, D.~Chakraborty, M.-C. Chen, R.~S.
+  Chivukula, G.~Cowan, O.~Dahl, G.~D'Ambrosio, T.~Damour, D.~de~Florian,
+  A.~de~Gouv\^ea, T.~DeGrand, P.~de~Jong, G.~Dissertori, B.~A. Dobrescu,
+  M.~D'Onofrio, M.~Doser, M.~Drees, H.~K. Dreiner, D.~A. Dwyer, P.~Eerola,
+  S.~Eidelman, J.~Ellis, J.~Erler, V.~V. Ezhela, W.~Fetscher, B.~D. Fields,
+  R.~Firestone, B.~Foster, A.~Freitas, H.~Gallagher, L.~Garren, H.-J. Gerber,
+  G.~Gerbier, T.~Gershon, Y.~Gershtein, T.~Gherghetta, A.~A. Godizov,
+  M.~Goodman, C.~Grab, A.~V. Gritsan, C.~Grojean, D.~E. Groom, M.~Gr\"unewald,
+  A.~Gurtu, T.~Gutsche, H.~E. Haber, C.~Hanhart, S.~Hashimoto, Y.~Hayato, K.~G.
+  Hayes, A.~Hebecker, S.~Heinemeyer, B.~Heltsley, J.~J. Hern\'andez-Rey,
+  J.~Hisano, A.~H\"ocker, J.~Holder, A.~Holtkamp, T.~Hyodo, K.~D. Irwin, K.~F.
+  Johnson, M.~Kado, M.~Karliner, U.~F. Katz, S.~R. Klein, E.~Klempt, R.~V.
+  Kowalewski, F.~Krauss, M.~Kreps, B.~Krusche, Yu.~V. Kuyanov, Y.~Kwon,
+  O.~Lahav, J.~Laiho, J.~Lesgourgues, A.~Liddle, Z.~Ligeti, C.-J. Lin,
+  C.~Lippmann, T.~M. Liss, L.~Littenberg, K.~S. Lugovsky, S.~B. Lugovsky,
+  A.~Lusiani, Y.~Makida, F.~Maltoni, T.~Mannel, A.~V. Manohar, W.~J. Marciano,
+  A.~D. Martin, A.~Masoni, J.~Matthews, U.-G. Mei\ss{}ner, D.~Milstead, R.~E.
+  Mitchell, K.~M\"onig, P.~Molaro, F.~Moortgat, M.~Moskovic, H.~Murayama,
+  M.~Narain, P.~Nason, S.~Navas, M.~Neubert, P.~Nevski, Y.~Nir, K.~A. Olive,
+  S.~Pagan~Griso, J.~Parsons, C.~Patrignani, J.~A. Peacock, M.~Pennington,
+  S.~T. Petcov, V.~A. Petrov, E.~Pianori, A.~Piepke, A.~Pomarol, A.~Quadt,
+  J.~Rademacker, G.~Raffelt, B.~N. Ratcliff, P.~Richardson, A.~Ringwald,
+  S.~Roesler, S.~Rolli, A.~Romaniouk, L.~J. Rosenberg, J.~L. Rosner, G.~Rybka,
+  R.~A. Ryutin, C.~T. Sachrajda, Y.~Sakai, G.~P. Salam, S.~Sarkar, F.~Sauli,
+  O.~Schneider, K.~Scholberg, A.~J. Schwartz, D.~Scott, V.~Sharma, S.~R.
+  Sharpe, T.~Shutt, M.~Silari, T.~Sj\"ostrand, P.~Skands, T.~Skwarnicki, J.~G.
+  Smith, G.~F. Smoot, S.~Spanier, H.~Spieler, C.~Spiering, A.~Stahl, S.~L.
+  Stone, T.~Sumiyoshi, M.~J. Syphers, K.~Terashi, J.~Terning, U.~Thoma, R.~S.
+  Thorne, L.~Tiator, M.~Titov, N.~P. Tkachenko, N.~A. T\"ornqvist, D.~R. Tovey,
+  G.~Valencia, R.~Van~de Water, N.~Varelas, G.~Venanzoni, L.~Verde, M.~G.
+  Vincter, P.~Vogel, A.~Vogt, S.~P. Wakely, W.~Walkowiak, C.~W. Walter,
+  D.~Wands, D.~R. Ward, M.~O. Wascko, G.~Weiglein, D.~H. Weinberg, E.~J.
+  Weinberg, M.~White, L.~R. Wiencke, S.~Willocq, C.~G. Wohl, J.~Womersley,
+  C.~L. Woody, R.~L. Workman, W.-M. Yao, G.~P. Zeller, O.~V. Zenin, R.-Y. Zhu,
+  S.-L. Zhu, F.~Zimmermann, P.~A. Zyla, J.~Anderson, L.~Fuller, V.~S. Lugovsky,
+  and P.~Schaffner.
+\newblock Review of particle physics.
+\newblock \emph{Phys. Rev. D}, 98:\penalty0 030001, Aug 2018.
+\newblock \doi{10.1103/PhysRevD.98.030001}.
+\newblock URL \url{https://link.aps.org/doi/10.1103/PhysRevD.98.030001}.
+
+\bibitem[R.~Nania(2018)]{EEEcosmicrays}
+O.~Pinazza R.~Nania.
+\newblock Measuring cosmic ray showers with near the north pole with the
+  extreme energy events project.
+\newblock \emph{Il Nuovo Saggiatore}, 34\penalty0 (5-6), 2018.
+\newblock URL \url{https://www.ilnuovosaggiatore.sif.it/article/179}.
+
+\bibitem[Kobelev et~al.(2011)Kobelev, Belov, Mavromichalaki, Gerontidou, and
+  Yanke]{Kobelev}
+Kobelev, A.~Belov, E~Mavromichalaki, M.~Gerontidou, and Victor Yanke.
+\newblock Variations of barometric coefficients of the neutron component in the
+  22-23 cycles of solar activity.
+\newblock 01 2011.
+
+\bibitem[De~Mendonça et~al.(2013)De~Mendonça, Raulin, Echer, Makhmutov, and
+  Fernandez]{doi:10.1029/2012JA018026}
+R.~R.~S. De~Mendonça, J.~P. Raulin, E.~Echer, V.~S. Makhmutov, and
+  G.~Fernandez.
+\newblock Analysis of atmospheric pressure and temperature effects on cosmic
+  ray measurements.
+\newblock \emph{Journal of Geophysical Research: Space Physics}, 118\penalty0
+  (4):\penalty0 1403--1409, 2013.
+\newblock \doi{10.1029/2012JA018026}.
+\newblock URL
+  \url{https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2012JA018026}.
+
+\bibitem[Rocca and F.Riggi()]{EEEwebsite}
+P.La Rocca and F.Riggi.
+\newblock Procedure for the determination of the barometric coefficient.
+\newblock URL
+  \url{https://eee.centrofermi.it/research/documents-and-procedures}.
+
+\bibitem[Berkova et~al.(2012)Berkova, Belov, Eroshenko, and
+  Yanke]{astra-8-41-2012}
+M.~Berkova, A.~Belov, E.~Eroshenko, and V.~Yanke.
+\newblock Temperature effect of muon component and practical questions of how
+  to take into account in real time.
+\newblock \emph{Astrophysics and Space Sciences Transactions}, 8\penalty0
+  (1):\penalty0 41--44, 2012.
+\newblock \doi{10.5194/astra-8-41-2012}.
+\newblock URL \url{http://www.astrophys-space-sci-trans.net/8/41/2012/}.
+
+\end{thebibliography}

@@ -1,0 +1,165 @@
+@misc{Xmisc,
+    author = "Morten Hjorth-Jensen",
+    title = "Computational Physics, Lecture Notes",
+    %howpublished = "",
+    year = "2015",
+    month = "8",
+    %note = "",
+}
+
+@unknown{Hugo,
+    author = {Hernandez, Hugo},
+    year = {2017},
+    month = {02},
+    pages = {},
+    title = {Standard Maxwell-Boltzmann distribution: Definition and Properties},
+    doi = {10.13140/RG.2.2.29888.74244}
+}
+
+@book{schroeder1999introduction,
+  title={An Introduction to Thermal Physics},
+  author={Schroeder, D.V.},
+  isbn={9780201380279},
+  lccn={99031696},
+  url={https://books.google.no/books?id=1gosQgAACAAJ},
+  year={1999},
+  publisher={Addison Wesley}
+}
+
+@unknown{Hafreager,
+  title={Molecular dynamics FYS3150},
+  author={Anders Hafreager},
+  url={https://github.com/andeplane/molecular-dynamics-fys3150},
+  year={2017},
+}
+
+@book{mortimer2008physical,
+  title={Physical Chemistry},
+  author={Mortimer, R.G.},
+  isbn={9780080878591},
+  url={https://books.google.no/books?id=eH\_1dIZr-zMC},
+  year={2008},
+  publisher={Elsevier Science}
+}
+
+@book{Lide,
+  title={CRC Handbook of Chemistry and Physics},
+  author={Lide, D. R.},
+  edition = {86},
+  isbn={0-8493-0486-5},
+  year={2005},
+  publisher={CRC Press}
+}
+
+@misc{PDG2016review,
+	year = {2016},
+	howpublished = {Chinese Physics C},
+	note = {40, 100001},
+	author = {C. Patrignani et al. (Particle Data Group)},
+	title = {Review of Particle Physics},
+	journal = {Chinese Physics C},
+}
+
+@INPROCEEDINGS{POSarticle,
+       author = {{Pellegrino}, C. and {Noferini}, F. and {Abbrescia}, M. and
+         {Avanzini}, C. and {Baldini}, L. and {Baldini Ferroli}, R. and
+         {Batignani}, L.~G. and {Battaglieri}, M. and {Boi}, S. and
+         {Bossini}, E. and {Carnesecchi}, F. and {Cavazza}, D. and
+         {Cical{\`o}}, C. and {Cifarelli}, L. and {Coccetti}, F. and
+         {Coccia}, E. and {Corvaglia}, A. and {De Gruttola}, D. and
+         {De Pasquale}, S. and {Fabbri}, L. and {Falchieri}, D. and
+         {Galante}, L. and {Galeotti}, P. and {Garbini}, M. and {Gemme}, G. and
+         {Gnesi}, I. and {Grazzi}, S. and {Hatzifotiadou}, D. and
+         {La Rocca}, P. and {Liu}, Z. and {Mandaglio}, G. and {Maron}, G. and
+         {Mazziotta}, M.~N. and {Meneghini}, S. and {Mulliri}, A. and
+         {Nania}, R. and {Nozzoli}, F. and {Palmonari}, F. and {Panareo}, M. and
+         {Panetta}, M.~P. and {Paoletti}, R. and {Perasso}, L. and
+         {Pinazza}, O. and {Pinto}, C. and {Piragino}, G. and {Pisano}, S. and
+         {Riggi}, F. and {Righini}, G.~C. and {Ripoli}, C. and {Rizzi}, M. and
+         {Sartorelli}, G. and {Scapparone}, E. and {Schioppa}, M. and
+         {Scribano}, A. and {Selvi}, M. and {Serri}, G. and {Squarcia}, S. and
+         {Taiuti}, M. and {Terreni}, G. and {Travaglini}, R. and
+         {Trifir{\`o}}, A. and {Trimarchi}, M. and {Vistoli}, M.~C. and
+         {Votano}, L. and {Williams}, M.~C.~S. and {Zichichi}, A. and
+         {Zuyeuski}, R.},
+        title = "{First results from PolarquEEEst}",
+    booktitle = {36th International Cosmic Ray Conference (ICRC2019)},
+         year = 2019,
+       series = {International Cosmic Ray Conference},
+       volume = {36},
+        month = jul,
+          eid = {371},
+        pages = {371},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2019ICRC...36..371P},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+
+
+@article{PhysRevD.98.030001,
+  title = {Review of Particle Physics},
+  author = {Tanabashi, M. and Hagiwara, K. and Hikasa, K. and Nakamura, K. and Sumino, Y. and Takahashi, F. and Tanaka, J. and Agashe, K. and Aielli, G. and Amsler, C. and Antonelli, M. and Asner, D. M. and Baer, H. and Banerjee, Sw. and Barnett, R. M. and Basaglia, T. and Bauer, C. W. and Beatty, J. J. and Belousov, V. I. and Beringer, J. and Bethke, S. and Bettini, A. and Bichsel, H. and Biebel, O. and Black, K. M. and Blucher, E. and Buchmuller, O. and Burkert, V. and Bychkov, M. A. and Cahn, R. N. and Carena, M. and Ceccucci, A. and Cerri, A. and Chakraborty, D. and Chen, M.-C. and Chivukula, R. S. and Cowan, G. and Dahl, O. and D'Ambrosio, G. and Damour, T. and de Florian, D. and de Gouv\^ea, A. and DeGrand, T. and de Jong, P. and Dissertori, G. and Dobrescu, B. A. and D'Onofrio, M. and Doser, M. and Drees, M. and Dreiner, H. K. and Dwyer, D. A. and Eerola, P. and Eidelman, S. and Ellis, J. and Erler, J. and Ezhela, V. V. and Fetscher, W. and Fields, B. D. and Firestone, R. and Foster, B. and Freitas, A. and Gallagher, H. and Garren, L. and Gerber, H.-J. and Gerbier, G. and Gershon, T. and Gershtein, Y. and Gherghetta, T. and Godizov, A. A. and Goodman, M. and Grab, C. and Gritsan, A. V. and Grojean, C. and Groom, D. E. and Gr\"unewald, M. and Gurtu, A. and Gutsche, T. and Haber, H. E. and Hanhart, C. and Hashimoto, S. and Hayato, Y. and Hayes, K. G. and Hebecker, A. and Heinemeyer, S. and Heltsley, B. and Hern\'andez-Rey, J. J. and Hisano, J. and H\"ocker, A. and Holder, J. and Holtkamp, A. and Hyodo, T. and Irwin, K. D. and Johnson, K. F. and Kado, M. and Karliner, M. and Katz, U. F. and Klein, S. R. and Klempt, E. and Kowalewski, R. V. and Krauss, F. and Kreps, M. and Krusche, B. and Kuyanov, Yu. V. and Kwon, Y. and Lahav, O. and Laiho, J. and Lesgourgues, J. and Liddle, A. and Ligeti, Z. and Lin, C.-J. and Lippmann, C. and Liss, T. M. and Littenberg, L. and Lugovsky, K. S. and Lugovsky, S. B. and Lusiani, A. and Makida, Y. and Maltoni, F. and Mannel, T. and Manohar, A. V. and Marciano, W. J. and Martin, A. D. and Masoni, A. and Matthews, J. and Mei\ss{}ner, U.-G. and Milstead, D. and Mitchell, R. E. and M\"onig, K. and Molaro, P. and Moortgat, F. and Moskovic, M. and Murayama, H. and Narain, M. and Nason, P. and Navas, S. and Neubert, M. and Nevski, P. and Nir, Y. and Olive, K. A. and Pagan Griso, S. and Parsons, J. and Patrignani, C. and Peacock, J. A. and Pennington, M. and Petcov, S. T. and Petrov, V. A. and Pianori, E. and Piepke, A. and Pomarol, A. and Quadt, A. and Rademacker, J. and Raffelt, G. and Ratcliff, B. N. and Richardson, P. and Ringwald, A. and Roesler, S. and Rolli, S. and Romaniouk, A. and Rosenberg, L. J. and Rosner, J. L. and Rybka, G. and Ryutin, R. A. and Sachrajda, C. T. and Sakai, Y. and Salam, G. P. and Sarkar, S. and Sauli, F. and Schneider, O. and Scholberg, K. and Schwartz, A. J. and Scott, D. and Sharma, V. and Sharpe, S. R. and Shutt, T. and Silari, M. and Sj\"ostrand, T. and Skands, P. and Skwarnicki, T. and Smith, J. G. and Smoot, G. F. and Spanier, S. and Spieler, H. and Spiering, C. and Stahl, A. and Stone, S. L. and Sumiyoshi, T. and Syphers, M. J. and Terashi, K. and Terning, J. and Thoma, U. and Thorne, R. S. and Tiator, L. and Titov, M. and Tkachenko, N. P. and T\"ornqvist, N. A. and Tovey, D. R. and Valencia, G. and Van de Water, R. and Varelas, N. and Venanzoni, G. and Verde, L. and Vincter, M. G. and Vogel, P. and Vogt, A. and Wakely, S. P. and Walkowiak, W. and Walter, C. W. and Wands, D. and Ward, D. R. and Wascko, M. O. and Weiglein, G. and Weinberg, D. H. and Weinberg, E. J. and White, M. and Wiencke, L. R. and Willocq, S. and Wohl, C. G. and Womersley, J. and Woody, C. L. and Workman, R. L. and Yao, W.-M. and Zeller, G. P. and Zenin, O. V. and Zhu, R.-Y. and Zhu, S.-L. and Zimmermann, F. and Zyla, P. A. and Anderson, J. and Fuller, L. and Lugovsky, V. S. and Schaffner, P.},
+  collaboration = {Particle Data Group},
+  journal = {Phys. Rev. D},
+  volume = {98},
+  issue = {3},
+  pages = {030001},
+  numpages = {1898},
+  year = {2018},
+  month = {Aug},
+  publisher = {American Physical Society},
+  doi = {10.1103/PhysRevD.98.030001},
+  url = {https://link.aps.org/doi/10.1103/PhysRevD.98.030001}
+}
+
+@article{EEEcosmicrays,
+  title={Measuring cosmic ray showers with near the north pole with the extreme energy events project},
+  author={R. Nania, O. Pinazza},
+  journal = {Il Nuovo Saggiatore},
+  url={https://www.ilnuovosaggiatore.sif.it/article/179},
+  volume = {34},
+  number = {5-6},
+  year={2018},
+}
+
+
+@article{doi:10.1029/2012JA018026,
+author = {De Mendonça, R. R. S. and Raulin, J. -P. and Echer, E. and Makhmutov, V. S. and Fernandez, G.},
+title = {Analysis of atmospheric pressure and temperature effects on cosmic ray measurements},
+journal = {Journal of Geophysical Research: Space Physics},
+volume = {118},
+number = {4},
+pages = {1403-1409},
+keywords = {Cosmic Rays, Pressure Effect on cosmic rays, Temperature effect on cosmic rays},
+doi = {10.1029/2012JA018026},
+url = {https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2012JA018026},
+eprint = {https://agupubs.onlinelibrary.wiley.com/doi/pdf/10.1029/2012JA018026},
+year = {2013}
+}
+
+
+@article{Kobelev,
+author = {Kobelev, and Belov, A. and Mavromichalaki, E and Gerontidou, M. and Yanke, Victor},
+year = {2011},
+month = {01},
+title = {Variations of Barometric Coefficients of the Neutron Component in the 22-23 Cycles of Solar Activity}
+}
+
+@article{EEEwebsite,
+author={P.La Rocca and F.Riggi},
+title = {Procedure for the determination of the barometric coefficient},
+url = {https://eee.centrofermi.it/research/documents-and-procedures}
+}
+
+
+@Article{astra-8-41-2012,
+AUTHOR = {Berkova, M. and Belov, A. and Eroshenko, E. and Yanke, V.},
+TITLE = {Temperature effect of muon component and practical questions of how to take into account in real time},
+JOURNAL = {Astrophysics and Space Sciences Transactions},
+VOLUME = {8},
+YEAR = {2012},
+NUMBER = {1},
+PAGES = {41--44},
+URL = {http://www.astrophys-space-sci-trans.net/8/41/2012/},
+DOI = {10.5194/astra-8-41-2012}
+}
