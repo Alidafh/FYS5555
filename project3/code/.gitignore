@@ -39,3 +39,10 @@ __pycache__
 
 test*
 outfile*
+/output/*
+../papers/*
+../Analysis/*
+../CERN/*
+../github/*
+../mycomphep/*
+/backup/*
