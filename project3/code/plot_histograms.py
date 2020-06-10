@@ -5,6 +5,7 @@ import re
 from run_analysis import get_filenames, Quiet
 from statistics import Poisson, CL, significance, pFromSig, sigFromP, test_sig
 from ctypes import c_double
+import matplotlib.pyplot as plt
 np.seterr(divide='ignore', invalid='ignore')
 ######################################################################
 #   Path to your histograms if this is changed manually
@@ -181,6 +182,7 @@ c0.SetCanvasSize(800,800);
 c0.Divide(1,2)
 
 c0.cd(1)
+#ro.gPad.SetLogy(1)
 mc_stack, mc_leg = stack_hist(dict_mc, "mc")
 mc_stack.Draw("hist")
 hist_stat.Draw("e2same")
@@ -259,8 +261,11 @@ print("\nPreforming Gaussian fit to Monte Carlo signal...")
 hm = hist_mc.Clone("gaus fit")
 hm.Fit("gaus", "q0", "", 120, 130)
 func_s = hm.GetFunction("gaus")
-h_sig = ro.TH1F("", "", 100, 120,130)
-h_sig.Eval(func_s)
+
+#h_sig = ro.TH1F("", "", 100, 120,130)
+h_sig2 = ro.TH1F("", "", 30, 120,130)
+#h_sig.Eval(func_s)
+h_sig2.Eval(func_s)
 
 gaus_par = [func_s.GetParameter(i) for i in range(3)]
 gaus_err = [func_s.GetParError(i) for i in range(3)]
@@ -269,6 +274,18 @@ c.SetCanvasSize(1000, 600)
 ro.gStyle.SetOptFit(0)
 hm.Draw("E")
 func_s.Draw("L SAME")
+"""
+c.Clear()
+rp0 = ro.TRatioPlot(hm, "errasym")
+rp0.SetSeparationMargin(0.0);
+rp0.SetGraphDrawOpt("L");
+rp0.Draw()
+rp0.GetLowerRefYaxis().SetTitle("Residual");
+rp0.GetLowerRefYaxis().SetNdivisions(405)
+rp0.GetLowerRefGraph().SetMinimum(-3);
+rp0.GetLowerRefGraph().SetMaximum(3);
+c.Update()
+"""
 
 chi2 = func_s.GetChisquare()
 ndf = func_s.GetNDF()
@@ -311,6 +328,7 @@ c.Close()
 
 print ("Chi2/ndf:        ", "{:.4f}".format(func_s.GetChisquare()/func_s.GetNDF()))
 print ("Prob:            ", "{:.4f}".format(func_s.GetProb()))
+
 #######################################################################
 # Signal + bkg fit to data
 #######################################################################
@@ -341,7 +359,7 @@ h_sb.Eval(func_sb)
 ro.gStyle.SetOptFit(0)
 c_sb.Clear()
 
-rp = ro.TRatioPlot(h_splusb, "diffsig")
+rp = ro.TRatioPlot(h_splusb, "errfunc")
 rp.SetSeparationMargin(0.0);
 rp.SetGraphDrawOpt("L");
 rp.Draw()
@@ -412,7 +430,7 @@ func_bkg1 = h_data_bkgfit.GetFunction("bkg1")
 #h_bkg1 = ro.TH1F("h_bkg", "h_bkg", 100, 105, 160)
 #h_bkg1.Eval(func_bkg1)
 
-rp1 = ro.TRatioPlot(h_data_bkgfit, "diff")
+rp1 = ro.TRatioPlot(h_data_bkgfit, "errfunc")
 rp1.SetSeparationMargin(0.0);
 rp1.SetGraphDrawOpt("L");
 rp1.Draw()
@@ -518,11 +536,6 @@ h_bkg1.SetFillColor(41); h_bkg1.SetLineStyle(1) ; h_bkg1.SetLineColor(1); h_bkg1
 h_bkg1.Sumw2()
 h_bkg1.Eval(bkg1)
 
-h_bkg1 = ro.TH1F("hbkg", "; m_{#gamma#gamma}; Events", 30, 105, 160)
-h_bkg1.SetFillColor(41); h_bkg1.SetLineStyle(1) ; h_bkg1.SetLineColor(1); h_bkg1.SetLineWidth(1)
-h_bkg1.Sumw2()
-h_bkg1.Eval(bkg1)
-
 h_sig = ro.TH1F("hsig", "; m_{#gamma#gamma}; Events", 30, 105, 160)
 h_sig.Sumw2()
 h_sig.SetFillColor(46); h_sig.SetLineStyle(1); h_sig.SetLineColor(1); h_sig.SetLineWidth(1)
@@ -566,8 +579,8 @@ print("observed: {:.2e} ({:.2f} sigma)".format(p_obs2, obs_significance2))
 print("---------------------------")
 print("BACKGROUND ONLY")
 print("------------------------------")
-n3, s3, b3 = count_events(h_dat, h_sig, h_bkg, 120, 130)
-n4, s4, b4 = count_events(h_dat, h_sig, h_bkg, 110, 160)
+n3, s3, b3 = count_events(h_dat, h_sig, h_bkg1, 120, 130)
+n4, s4, b4 = count_events(h_dat, h_sig, h_bkg1, 110, 160)
 
 exp_significance3, obs_significance3= significance(0, b3, n3)
 exp_significance4, obs_significance4 = significance(0, b4, n4)
@@ -586,6 +599,105 @@ print("\nIn the full mass range:")
 print("nobs = {:.1f}, s = {:.1f}, b = {:.1f}".format(n4, s4, b4))
 print("expected: {:.2e} ({:.2f} sigma)".format(p_exp4, exp_significance4))
 print("observed: {:.2e} ({:.2f} sigma)".format(p_obs4, obs_significance4))
+
+
+
+###############################################################################
+print("\n---------------------------")
+print("NY GREIE")
+print("---------------------------")
+
+def count_events2(h1, h2, low, high):
+    x1 = h1.FindBin(low)
+    x2 = h1.FindBin(high)
+    n = h1.Integral(x1, x2)
+    b = h2.Integral(x1, x2)
+    return n, b
+
+back = np.zeros(30)
+dat = np.zeros(30)
+sig = np.zeros(30)
+
+for i in range(30):
+    back[i] = h_bkg.GetBinContent(i)
+    dat[i] = h_dat.GetBinContent(i)
+    sig[i] = h_sig.GetBinContent(i)
+
+x = np.linspace(105, 160, 30)
+
+z0 = (dat - back)/np.sqrt(back)
+z0_med = 125/np.sqrt(back)
+
+"""
+legends = [r"$Z_0$ (Significance for rejecting s = 0)","Expected (median) significance assuming signal rate s"]
+plt.figure(1)
+plt.plot(x, z0,"o-", x, z0_med, "-o")
+plt.xlabel(r"$m_{\gamma\gamma}$")
+plt.ylabel(r"Significance, Z")
+plt.legend(legends)
+plt.show()
+"""
+
+legends = [r"$Z_0$ (Significance for rejecting s = 0)","Expected (median) significance"]
+plt.figure(1)
+plt.plot(x, z0,"o-")
+plt.xlabel(r"$m_{\gamma\gamma}$")
+plt.ylabel(r"Significance, $Z_0$")
+plt.legend([r"Observed $Z_0$"])
+plt.show()
+
+p0 = np.zeros(30)
+p0_med = np.zeros(30)
+
+for i in range(30):
+    p0[i] = ro.Math.chisquared_cdf_c(pow(z0[i], 2), 1)/2
+    p0_med[i] = ro.Math.chisquared_cdf_c(pow(z0_med[i], 2), 1)/2
+
+legends2 = [r"Observed",r"Expected"]
+#legends2 = [r"Observed $p_0$ (Probability of rejecting s = 0)","Expected (median) probability assuming signal rate s"]
+plt.figure(2)
+plt.semilogy(x, p0,"o-", x, p0_med, "--")
+plt.xlabel(r"$m_{\gamma\gamma}$")
+plt.ylabel(r"Local $p_0$")
+plt.legend(legends2)
+plt.show()
+
+##############################################################################
+
+h_dat.SetName("data")
+h_bkg.SetName("background")
+h_sig.SetName("signal")
+"""
+infile = ro.TFile("plotfile.root", "NEW")
+h_dat.Write()
+h_sig.Write()
+h_bkg.Write()
+infile.Close()
+"""
+
+dat1, sig1, back1 = count_events(h_dat, h_sig, h_bkg, 120, 130)
+
+z01 = (dat1 - back1)/np.sqrt(back1)
+z01_med = sig1/np.sqrt(back1)
+
+p01 = ro.Math.chisquared_cdf_c(pow(z01, 2), 1)/2
+p01_med = ro.Math.chisquared_cdf_c(pow(z01_med, 2), 1)/2
+
+print("In mass window +-5 GeV around 125 GeV:")
+print("Significance for rejecting s = 0 is: {:.2f}  (p-value: {:.2e})".format(z01, p01))
+
+dat2, sig2, back2 = count_events(h_dat, h_sig, h_bkg, 105, 160)
+
+z02 = (dat2 - back2)/np.sqrt(back2)
+z02_med = sig2/np.sqrt(back2)
+
+p02 = ro.Math.chisquared_cdf_c(pow(z02, 2), 1)/2
+p02_med = ro.Math.chisquared_cdf_c(pow(z02_med, 2), 1)/2
+
+print("\nIn the full mass range:")
+print("Significance for rejecting s = 0 is: {:.2f}  (p-value: {:.2e})".format(z02, p02))
+
+
 
 """
 #mass_range = [120, 130]
